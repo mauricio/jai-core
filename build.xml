@@ -1,0 +1,697 @@
+<!--
+$RCSfile: build.xml,v $
+ 
+Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
+ 
+Use is subject to license terms.
+ 
+$Revision: 1.1 $
+$Date: 2005-02-11 04:55:28 $
+$State: Exp $
+-->
+<project name="jai" default="jar" basedir=".">
+  <description>
+    This project builds Java Advanced Imaging.
+
+    The environment variable MLIB_DIR may be used via the ant "-D" command
+    line option to specify the directory containing mlibwrapper_jai.jar;
+    the default value is src/share/mediaLib.
+
+    Class files are compiled into build/${platform}/debug/classes or
+    build/${platform}/opt/classes.
+
+    Jar files are created in build/${platform}/debug/lib/ext or
+    build/${platform}/opt/lib/ext.
+
+    Native libraries are copied to build/${platform}/debug/bin or
+    build/${platform}/opt/bin on Windows and
+    build/${platform}/debug/lib/${arch} or
+    build/${platform}/opt/lib/${arch} on all other platforms.
+
+    Javadoc is created in build/${platform}/javadocs/docs-jcp,
+    build/${platform}/javadocs/docs-private, or
+    build/${platform}/javadocs/docs-public depending on the access type.
+
+    The distribution lib bundle is created in dist/${platform}/lib.
+
+    The distribution javadoc bundle is created in dist/${platform}/javadocs.
+  </description>
+
+  <!-- Set global version properties for this build -->
+  <!-- Version strings -->
+  <property name="verspec" value="1.1-mr"/>
+  <property name="verimpl" value="1.1.2_01"/>
+  <!-- Version strings as used in file names -->
+  <property name="verspecfile" value="1_1-mr"/>
+  <property name="verimplfile" value="1_1_2_01"/>
+  <!-- Other global properties -->
+  <property name="src"     value="src/share/classes"/>
+  <property name="build"   value="build"/>
+  <property name="dist"    value="dist"/>
+  <property name="textdir" value="."/>
+  <property name="packageListLoc" value="build-tools"/>
+  <property name="pkgname" value="jai-${verimplfile}-lib"/>
+  <property name="docname" value="jai-${verspecfile}-doc"/>
+
+  <!-- Sets a single property depending on the type of current platform. -->
+  <target name="determinePlatform">
+    <condition property="isLinuxOnX86">
+        <os name="linux" arch="i386"/>
+    </condition>
+
+    <condition property="isSolarisOnSparc">
+        <os name="SunOS" arch="sparc"/>
+    </condition>   
+
+    <condition property="isSolarisOnX86">
+        <os name="SunOS" arch="x86"/>
+    </condition>   
+
+    <condition property="isWindowsOnX86">
+	<os family="windows" arch="x86"/>
+    </condition>
+  </target>
+
+  <target name="setupLinuxX86" if="isLinuxOnX86">	
+    <property name="ostype" value="linux"/>
+    <property name="platform" value="linux-i586"/>
+    <property name="arch" value="i386"/>
+    <property name="mlibarch" value="linux"/>
+    <property name="jrenativesubdir" value="lib/${arch}"/>
+  </target>
+
+  <target name="setupSolarisSparc" if="isSolarisOnSparc">	
+    <property name="ostype" value="solaris"/>
+    <property name="platform" value="solaris-sparc"/>
+    <property name="arch" value="sparc"/>
+    <property name="mlibarch" value="sparc"/>
+    <property name="jrenativesubdir" value="lib/${arch}"/>
+  </target>
+
+  <target name="setupSolarisX86" if="isSolarisOnX86">	
+    <property name="ostype" value="solaris"/>
+    <property name="platform" value="solaris-i586"/>
+    <property name="arch" value="i386"/>
+    <property name="mlibarch" value="i386"/>
+    <property name="jrenativesubdir" value="lib/${arch}"/>
+  </target>
+
+  <target name="setupWindows" if="isWindowsOnX86">	
+    <property name="ostype" value="windows"/>
+    <property name="platform" value="windows-i586"/>
+    <property name="arch" value="i386"/>
+    <property name="mlibarch" value="win32"/>
+    <property name="jrenativesubdir" value="bin"/>
+  </target>
+
+  <!-- Set properties as a function of the type of platform. -->
+  <target name="setupPlatform"
+	  depends="determinePlatform,
+		   setupLinuxX86,
+		   setupSolarisSparc,
+		   setupSolarisX86,
+		   setupWindows">
+  </target>
+
+  <!-- Sets "mlib" property to "MLIB_DIR" environment variable. -->
+  <target name="mlib-env" if="MLIB_DIR">
+    <property name="mlib" value="${MLIB_DIR}"/>
+  </target>
+
+  <!-- Sets "mlib" property to default value. -->
+  <target name="mlib-def" unless="MLIB_DIR">
+    <property name="mlib" value="src/share/mediaLib"/>
+  </target>
+
+  <!-- Sets "mlib" property. -->
+  <target name="mlib-property" depends="mlib-env,mlib-def"/>
+
+  <!-- Sets the platform-dependent properties, the "mlib" property,
+       and the time stamps. -->
+  <target name="init" depends="setupPlatform,mlib-property">
+    <!-- Create the time stamp -->
+    <tstamp>
+      <!-- Set time stamp properties -->
+      <format property="datestamp" pattern="yyyy.MM.dd"/>
+      <format property="timestamp" pattern="yyyy-MM-dd HH:mm:ss.SZ"/>
+      <format property="filestamp" pattern="yyyy_MM_dd_HH_mm_ss"/>
+    </tstamp>
+  </target>
+
+  <target name="echo" depends="setupPlatform,mlib-property"
+	  description="Prints the values of pertinent properties.">
+    <echo message="os.arch         = ${os.arch}"/>
+    <echo message="os.name         = ${os.name}"/>	
+    <echo message="ant.home        = ${ant.home}"/>
+    <echo message="java.home       = ${java.home}"/>
+    <echo message="user.name       = ${user.name}"/>
+    <echo message="user.home       = ${user.home}"/>
+
+    <echo message=""/>
+
+    <echo message="platform        = ${platform}"/>
+    <echo message="ostype          = ${ostype}"/>
+    <echo message="arch            = ${arch}"/>
+    <echo message="mlibarch        = ${mlibarch}"/>
+    <echo message="jrenativesubdir = ${jrenativesubdir}"/>
+
+    <echo message=""/>
+
+    <echo message="verspec         = ${verspec}"/>
+    <echo message="verimpl         = ${verimpl}"/>
+    <echo message="verspecfile     = ${verspecfile}"/>
+    <echo message="verimplfile     = ${verimplfile}"/>
+
+    <echo message=""/>
+
+    <echo message="src             = ${src}"/>
+    <echo message="mlib            = ${mlib}"/>
+    <echo message="textdir         = ${textdir}"/>
+    <echo message="packageListLoc  = ${packageListLoc}"/>
+    <echo message="build           = ${build}"/>
+    <echo message="dist            = ${dist}"/>
+    <echo message="pkgname         = ${pkgname}"/>
+    <echo message="docname         = ${docname}"/>
+  </target>
+
+  <!-- Sets compilation mode dependent properties to debug values and
+       invokes the target named "${targetname}". -->
+  <target name="do-debug" depends="init">
+    <property name="debugsetting" value="true"/>
+    <property name="debugoroptsubdir" value="debug"/>
+    <property name="builddir"
+	      value="${build}/${platform}/${debugoroptsubdir}"/>
+    <property name="classdir"
+	      value="${builddir}/classes"/>
+    <property name="jardir"
+	      value="${builddir}/lib/ext"/>
+    <property name="libdir"
+	      value="${builddir}/${jrenativesubdir}"/>
+
+    <antcall target="${targetname}"/>
+  </target>
+
+  <!-- Sets compilation mode dependent properties to non-debug values and
+       invokes the target named "${targetname}". -->
+  <target name="do-opt" depends="init">
+    <property name="debugsetting" value="off"/>
+    <property name="debugoroptsubdir" value="opt"/>
+    <property name="builddir"
+	      value="${build}/${platform}/${debugoroptsubdir}"/>
+    <property name="classdir"
+	      value="${builddir}/classes"/>
+    <property name="jardir"
+	      value="${builddir}/lib/ext"/>
+    <property name="libdir"
+	      value="${builddir}/${jrenativesubdir}"/>
+
+    <antcall target="${targetname}"/>
+  </target>
+
+  <!-- Invokes "do-debug" target with target "${targetname}". -->
+  <target name="debugcall">
+    <antcall target="do-debug">
+      <param name="targetname" value="${targetname}"/>
+    </antcall>
+  </target>
+
+  <!-- Invokes "do-opt" target with target "${targetname}". -->
+  <target name="optcall">
+    <antcall target="do-opt">
+      <param name="targetname" value="${targetname}"/>
+    </antcall>
+  </target>
+
+  <!-- Determines whether the codec-util target needs to run. -->
+  <target name="check-codec-util" depends="init" unless="codec_util_built">
+    <property name="core"      value="${src}/javax/media/jai"/>
+    <property name="core_util" value="${src}/com/sun/media/jai/util"/>
+    <property name="codec_util"
+              value="${src}/com/sun/media/jai/codecimpl/util"/>
+
+    <condition property="build_codec_util">
+      <or>
+        <not>
+	  <available file="${codec_util}"/>
+	</not>
+	<uptodate srcfile="${codec_util}/com.sun.media.jai.codecimpl.util.properties"
+		  targetfile="${core}/javax.media.jai.properties"/>
+	<uptodate srcfile="${codec_util}/com.sun.media.jai.codecimpl.util.properties"
+		  targetfile="${core_util}/com.sun.media.jai.util.properties"/>
+	<uptodate srcfile="${codec_util}/ComponentSampleModelJAI.java"
+		  targetfile="${core}/ComponentSampleModelJAI.java"/>
+	<uptodate srcfile="${codec_util}/DataBufferDouble.java"
+		  targetfile="${core}/DataBufferDouble.java"/>
+	<uptodate srcfile="${codec_util}/DataBufferFloat.java"
+		  targetfile="${core}/DataBufferFloat.java"/>
+	<uptodate srcfile="${codec_util}/FloatDoubleColorModel.java"
+		  targetfile="${core}/FloatDoubleColorModel.java"/>
+	<uptodate srcfile="${codec_util}/JaiI18N.java"
+		  targetfile="${core}/JaiI18N.java"/>
+	<uptodate srcfile="${codec_util}/RasterFactory.java"
+		  targetfile="${core}/RasterFactory.java"/>
+	<uptodate srcfile="${codec_util}/ImagingException.java"
+		  targetfile="${core}/util/ImagingException.java"/>
+	<uptodate srcfile="${codec_util}/DataBufferUtils.java"
+		  targetfile="${core_util}/DataBufferUtils.java"/>
+	<uptodate srcfile="${codec_util}/PropertyUtil.java"
+		  targetfile="${core_util}/PropertyUtil.java"/>
+      </or>
+    </condition>
+  </target>
+
+  <!-- Creates some source files from jai-core so that
+       jai_codec.jar is independent of jai_core.jar. -->
+  <target name="codec-util" depends="check-codec-util"
+	  if="build_codec_util" unless="codec_util_built">
+    <!-- Create the codec util directory -->
+    <delete dir="${codec_util}"/>
+    <mkdir dir="${codec_util}"/>
+
+    <!-- Properties file -->
+    <concat destfile="${codec_util}/com.sun.media.jai.codecimpl.util.properties">
+      <fileset dir="${core}"
+               includes="javax.media.jai.properties"/>
+      <fileset dir="${core_util}"
+               includes="com.sun.media.jai.util.properties"/>
+    </concat>
+
+    <!-- Copy core classes to codec utils -->
+    <copy todir="${codec_util}">
+      <fileset dir="${core}"
+               includes="ComponentSampleModelJAI.java,
+                         DataBufferDouble.java,
+                         DataBufferFloat.java,
+                         FloatDoubleColorModel.java,
+                         JaiI18N.java,
+                         RasterFactory.java"
+      />
+    </copy>
+    <copy todir="${codec_util}" file="${core}/util/ImagingException.java"/>
+
+    <!-- Replace core strings in codec utils -->
+    <replaceregexp file="${codec_util}/JaiI18N.java"
+		   byline="true"
+                   match="util\.PropertyUtil"
+                   replace="codecimpl.util.PropertyUtil"/>
+
+    <replaceregexp file="${codec_util}/JaiI18N.java"
+		   byline="true"
+                   match="javax.media.jai"
+                   replace="com.sun.media.jai.codecimpl.util"/>
+
+    <replaceregexp file="${codec_util}/ImagingException.java"
+		   byline="true"
+                   match="javax.media.jai.util"
+                   replace="com.sun.media.jai.codecimpl.util"/>
+
+    <replaceregexp byline="true"
+		   match="javax\.media\.jai"
+                   replace="com.sun.media.jai.codecimpl.util">
+      <fileset dir="${codec_util}"
+               includes="ComponentSampleModelJAI.java,
+                         DataBufferDouble.java,
+                         DataBufferFloat.java,
+                         FloatDoubleColorModel.java,
+                         RasterFactory.java"
+      />
+    </replaceregexp>
+
+    <replaceregexp byline="true"
+		   match="import\ com\.sun\.media\.jai\.util\.DataBufferUtils\;"
+                   replace="">
+      <fileset dir="${codec_util}"
+               includes="ComponentSampleModelJAI.java,
+                         DataBufferDouble.java,
+                         DataBufferFloat.java,
+                         FloatDoubleColorModel.java,
+                         RasterFactory.java"
+      />
+    </replaceregexp>
+
+    <!-- Copy core util classes to codec utils -->
+    <copy todir="${codec_util}">
+      <fileset dir="${core_util}"
+               includes="DataBufferUtils.java,
+                         PropertyUtil.java"
+      />
+    </copy>
+
+    <!-- Modify some strings to be appropriate for the codec util package -->
+    <replaceregexp file="${codec_util}/PropertyUtil.java"
+		   byline="true"
+                   match="javax\/media\/jai"
+                   replace="com\/sun\/media\/jai\/codec"/>
+
+    <replaceregexp file="${codec_util}/PropertyUtil.java"
+		   byline="true"
+                   match="javax\.media\.jai"
+                   replace="com.sun.media.jai.codecimpl.util"/>
+
+    <replaceregexp byline="true"
+		   match="com\.sun\.media\.jai\.util"
+                   replace="com\.sun\.media\.jai\.codecimpl\.util">
+      <fileset dir="${codec_util}"
+               includes="DataBufferUtils.java,
+                         PropertyUtil.java"
+      />
+    </replaceregexp>
+
+    <!-- Set property so target doesn't execuate again within this ant run. -->
+    <property name="codec_util_built" value="true"/>
+  </target>
+
+  <!-- Copies mediaLib debug mode files. -->
+  <target name="mlib-debug">
+    <antcall target="debugcall">
+      <param name="targetname" value="mlib"/>
+    </antcall>
+  </target>
+
+  <!-- Copies mediaLib non-debug mode files. -->
+  <target name="mlib-opt">
+    <antcall target="optcall">
+      <param name="targetname" value="mlib"/>
+    </antcall>
+  </target>
+
+  <!-- Copies mediaLib files. -->
+  <target name="mlib">
+    <!-- Copy the mediaLib jar file -->
+    <copy file="${mlib}/mlibwrapper_jai.jar" todir="${jardir}"/>
+
+    <!-- Copy the mediaLib native libraries -->
+    <copy todir="${libdir}">
+        <fileset dir="${mlib}/${mlibarch}" includes="**"/>
+    </copy>
+  </target>
+
+  <target name="compile" depends="codec-util"
+	  description="Executes targets compile-debug and compile-opt.">
+    <!-- Create the class file directory -->
+    <mkdir dir="${classdir}"/>
+
+    <!-- Copy the text files -->
+    <copy todir="${builddir}">
+      <fileset dir="${textdir}"
+	       includes="COPYRIGHT.txt,
+			 LICENSE.txt,
+			 LICENSE-JRL.txt,
+			 LICENSE-JDL.txt,
+			 LICENSE-mediaLibJAI.txt"/>
+    </copy>
+
+    <!-- Create the buildVersion file in build directory? -->
+    <echo message="${timestamp}" file="${builddir}/buildVersion"/>
+
+    <!-- Compile the java code from ${src} into ${classdir} -->
+    <javac sourcepath="" srcdir="${src}"
+           destdir="${classdir}"
+           classpath="${mlib}/mlibwrapper_jai.jar"
+           debug="${debugsetting}"
+           deprecation="on">
+      <exclude name="**/com/sun/media/jai/test/*.java"/>
+    </javac>
+
+    <!-- Generate RMIImageImpl stub -->
+    <rmic base="${classdir}"
+	  classname="com.sun.media.jai.rmi.RMIImageImpl"
+	  classpath="${classdir}"/>
+
+    <!-- Generate JAIRMIImageServer stub -->
+    <rmic base="${classdir}"
+	  classname="com.sun.media.jai.rmi.JAIRMIImageServer"
+	  classpath="${classdir}"/>
+  </target>
+
+  <target name="compile-debug" depends="codec-util,mlib-debug"
+	  description="Builds all classes with debug compilation.">
+    <antcall target="debugcall">
+      <param name="targetname" value="compile"/>
+    </antcall>
+  </target>
+
+  <target name="compile-opt" depends="codec-util,mlib-opt"
+	  description="Builds all classes with non-debug compilation.">
+    <antcall target="optcall">
+      <param name="targetname" value="compile"/>
+    </antcall>
+  </target>
+
+  <!-- Creates core manifest file. -->
+  <target name="manifest-core">
+    <!-- Create the core Manifest file -->
+    <manifest file="${builddir}/Manifest-core">
+      <attribute name="Specification-Title"
+                 value="Java Advanced Imaging"/>
+      <attribute name="Specification-Version"
+                 value="${verspec}"/>
+      <attribute name="Specification-Vendor"
+                 value="Sun Microsystems, Inc."/>
+      <attribute name="Implementation-Title"
+                 value="javax.media.jai"/>
+      <attribute name="Implementation-Version"
+                 value="${verimpl}"/> 
+      <attribute name="Implementation-Vendor"
+                 value="Sun Microsystems, Inc."/>
+      <attribute name="Extension-Name"
+                 value="javax.media.jai"/>
+      <attribute name="Sealed" value="true"/>
+    </manifest>
+  </target>
+
+  <!-- Create jai_core.jar. -->
+  <target name="jar-core" depends="compile,manifest-core">
+    <property name="javax" value="${src}/javax/media/jai"/>
+    <property name="com"   value="${src}/com/sun/media/jai"/>
+    <property name="codec" value="${src}/com/sun/media/jai/codec"/>
+    <property name="codecimpl" value="${src}/com/sun/media/jai/codecimpl"/>
+
+    <!-- Copy the buildVersion file -->
+    <copy todir="${classdir}/javax/media/jai"
+	  file="${builddir}/buildVersion"/>
+
+    <!-- Copy the registry file -->
+    <copy tofile="${builddir}/javax.media.jai.registryFile.jai"
+	  file="${javax}/registryFile.jai"/>
+
+    <!-- Copy the core I18N message files -->
+    <copy todir="${classdir}/javax/media/jai" flatten="true">
+      <fileset dir="${javax}">
+        <include name="**/*.properties"/>
+      </fileset>
+      <fileset dir="${com}">
+        <include name="**/*.properties"/>
+        <exclude name="**/codec/**/*.properties"/>
+        <exclude name="**/codecimpl/**/*.properties"/>
+      </fileset>
+    </copy>
+
+    <!-- Create jai_core.jar -->
+    <jar jarfile="${jardir}/jai_core.jar"
+         manifest="${builddir}/Manifest-core" update="yes" filesonly="true">
+	<fileset dir="${classdir}">
+          <exclude name="**/codec/**"/>
+          <exclude name="**/codecimpl/**"/>
+	</fileset>
+	<metainf dir="${builddir}" prefix="META-INF"
+		 includes="javax.media.jai.registryFile.jai"/>
+    </jar>
+  </target>
+
+  <!-- Creates the codec manifest file. -->
+  <target name="manifest-codec">
+    <!-- Create the codec Manifest file -->
+    <manifest file="${builddir}/Manifest-codec">
+      <attribute name="Specification-Title"
+                 value="Java Advanced Imaging Codecs"/>
+      <attribute name="Specification-Version"
+                 value="${verspec}"/>
+      <attribute name="Specification-Vendor"
+                 value="Sun Microsystems, Inc."/>
+      <attribute name="Implementation-Title"
+                 value="com.sun.media.jai.codec"/>
+      <attribute name="Implementation-Version"
+                 value="${verimpl}"/> 
+      <attribute name="Implementation-Vendor"
+                 value="Sun Microsystems, Inc."/>
+      <attribute name="Extension-Name"
+                 value="com.sun.media.jai.codec"/>
+      <attribute name="Sealed" value="true"/>
+    </manifest>
+  </target>
+
+  <!-- Create jai_code.jar. -->
+  <target name="jar-codec" depends="compile,manifest-codec">
+    <property name="codec" value="${src}/com/sun/media/jai/codec"/>
+    <property name="codecimpl" value="${src}/com/sun/media/jai/codecimpl"/>
+
+    <!-- Copy the buildVersion file -->
+    <copy todir="${classdir}/com/sun/media/jai/codec"
+	  file="${builddir}/buildVersion"/>
+
+    <!-- Copy the codec I18N message files -->
+    <copy todir="${classdir}/com/sun/media/jai/codec" flatten="true">
+      <fileset dir="${codec}">
+        <include name="**/*.properties"/>
+      </fileset>
+      <fileset dir="${codecimpl}">
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+
+    <!-- Create lib directory -->
+    <mkdir dir="${jardir}"/>
+
+    <!-- Create jai_codec.jar -->
+    <jar jarfile="${jardir}/jai_codec.jar"
+         manifest="${builddir}/Manifest-codec" update="yes" filesonly="true">
+	<fileset dir="${classdir}">
+          <include name="**/codec/**"/>
+          <include name="**/codecimpl/**"/>
+	</fileset>
+    </jar>
+  </target>
+
+  <target name="jar-debug" depends="compile-debug"
+	  description="Creates jar files from debug compiled class files.">
+    <antcall target="debugcall">
+      <param name="targetname" value="jar-codec"/>
+    </antcall>
+    <antcall target="debugcall">
+      <param name="targetname" value="jar-core"/>
+    </antcall>
+  </target>
+
+  <target name="jar-opt" depends="compile-opt"
+	  description="Creates jar files from non-debug compiled class files.">
+    <antcall target="optcall">
+      <param name="targetname" value="jar-codec"/>
+    </antcall>
+    <antcall target="optcall">
+      <param name="targetname" value="jar-core"/>
+    </antcall>
+  </target>
+
+  <target name="jar" depends="jar-debug,jar-opt"
+	  description="Executes targets jar-debug and jar-opt."/>
+
+  <!-- Generic doc target. Requires "docacccess" and "docsubdir"
+       properties to be set. -->
+  <target name="builddoc" depends="init">
+    <property name="docbuilddir"
+	      value="${build}/${platform}/javadocs/${docsubdir}"/>
+
+    <!-- Create the build directory structure used by builddoc -->
+    <mkdir dir="${docbuilddir}"/>
+
+    <!-- Copy the license file -->
+    <copy file="${textdir}/LICENSE-jaispec.txt"
+	  todir="${docbuilddir}"/>
+
+    <!-- Compile the javadoc from ${src} into ${docbuilddir} -->
+    <!-- NOTE: Cannot just list packages which exist in J2SE or in
+	 linked packages like JAI because the javadoc will be built
+	 by Ant for those packages. Instead in those cases the source
+	 files must be listed explicitely below. -->
+    <javadoc sourcepath="${src}"
+	     access="${docaccess}"
+	     packagenames="javax.media.jai.*,
+                           com.sun.media.jai.codec,
+                           com.sun.media.jai.remote,
+                           com.sun.media.jai.widget"
+	     maxmemory="128m"
+             destdir="${docbuilddir}"
+             windowtitle="Java Advanced Imaging ${verspecfile}">
+      <link offline="true"
+            href="http://java.sun.com/j2se/1.4.2/docs/api"
+            packagelistLoc="${packageListLoc}"/>
+      <!-- NOTE: An extra "linkoffline" might be needed if JAI is added
+		 or the package-list file will need to be amended. -->
+      <!-- http://java.sun.com/j2se/1.4.2/docs/api/package-list -->
+    </javadoc>
+  </target>
+
+  <target name="docs-jcp"
+	  description="Builds javadoc with JCP (protected) access.">
+    <antcall target="builddoc">
+      <param name="docaccess" value="protected"/>
+      <param name="docsubdir" value="docs-jcp"/>
+    </antcall>
+  </target>
+
+  <target name="docs-private"
+	  description="Builds javadoc with private access.">
+    <antcall target="builddoc">
+      <param name="docaccess" value="private"/>
+      <param name="docsubdir" value="docs-private"/>
+    </antcall>
+  </target>
+
+  <target name="docs-public"
+	  description="Builds javadoc with public access.">
+    <antcall target="builddoc">
+      <param name="docaccess" value="public"/>
+      <param name="docsubdir" value="docs-public"/>
+    </antcall>
+  </target>
+
+  <target name="docs" depends="docs-jcp,docs-private,docs-public"
+	  description="Builds javadoc for all access types."/>
+
+  <target name="dist" depends="init,docs-jcp,jar-opt"
+	  description="Creates the lib and javadoc distribution zip files.">
+    <property name="distdir" value="${dist}/${platform}"/>
+
+    <mkdir dir="${distdir}"/>
+    <mkdir dir="${distdir}/javadocs"/>
+    <mkdir dir="${distdir}/lib"/>
+    
+    <!-- Create the lib Zip archive -->
+    <zip zipfile="${distdir}/lib/${pkgname}-${platform}-${filestamp}.zip"
+	 basedir="${distdir}"
+	 filesonly="true">
+      <fileset file="${build}/${platform}/opt/COPYRIGHT.txt"/>
+      <fileset file="${build}/${platform}/opt/LICENSE.txt"/>
+      <fileset file="${build}/${platform}/opt/LICENSE-JRL.txt"/>
+      <fileset file="${build}/${platform}/opt/LICENSE-JDL.txt"/>
+      <fileset file="${build}/${platform}/opt/LICENSE-mediaLibJAI.txt"/>
+      <fileset dir="${build}/${platform}/opt"
+	       includes="lib/**,bin/**"/>
+    </zip>
+
+    <!-- Create a Zip doc bundle -->
+    <zip zipfile="${distdir}/javadocs/${docname}-${platform}-${filestamp}.zip"
+	 basedir="${build}/${platform}/javadocs/docs-jcp"
+	 includes="**"
+	 filesonly="true"/>
+  </target>
+
+  <target name="all" depends="jar-debug,dist"
+	  description="Executes targets jar-debug and dist."/>
+
+  <target name="clean" depends="init"
+	  description="Deletes entities created by all targets on current platform.">
+    <!-- Delete the ${build} and ${dist} directory trees
+         and the "codec-util" source files. -->
+    <delete dir="${build}/${platform}"/>
+    <delete dir="${dist}/${platform}"/>
+    <delete dir="${src}/com/sun/media/jai/codecimpl/util"/>
+  </target>
+
+  <target name="clean-all"
+	  description="Deletes entities created by all targets on all platforms.">
+    <!-- Delete the ${build} and ${dist} directory trees
+         and the "codec-util" source files. -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+    <delete dir="${src}/com/sun/media/jai/codecimpl/util"/>
+  </target>
+
+  <target name="clean-dist"
+	  description="Deletes distribution subdirectory.">
+    <!-- Delete the ${build} and ${dist} directory trees
+         and the "codec-util" source files. -->
+    <delete dir="${dist}"/>
+  </target>
+</project>

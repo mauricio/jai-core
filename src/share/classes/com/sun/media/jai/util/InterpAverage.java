@@ -1,0 +1,81 @@
+/*
+ * $RCSfile: InterpAverage.java,v $
+ *
+ * Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
+ *
+ * Use is subject to license terms.
+ *
+ * $Revision: 1.1 $
+ * $Date: 2005-02-11 04:57:00 $
+ * $State: Exp $
+ */package com.sun.media.jai.util;
+
+import javax.media.jai.Interpolation;
+
+/**
+ * An <code>Interpolation</code> class which performs simple averaging of
+ * all pixels within a specified neighborhood.  It is used by the
+ * "SubsampleAverage" operation implementations.
+ *
+ * @since JAI 1.1.2
+ */
+public class InterpAverage extends Interpolation {
+    /**
+     * Creates an <code>InterpAverage</code> instance having the supplied
+     * dimensions.  The <code>subsampleBitsH</code> and
+     * <code>subsampleBitsV</code> instance variables are set to 32.
+     *
+     * @param blockX The width of the interpolation block.
+     * @param blockY The height of the interpolation block.
+     *
+     * @throws IllegalArgumentException if either parameter is non-positive.
+     */
+    public InterpAverage(int blockX, int blockY) {
+        super(blockX, blockY,
+              0, blockX - 1, 0, blockY - 1,
+              32, 32);
+
+        if(blockX <= 0 || blockY <= 0) {
+            throw new IllegalArgumentException("blockX <= 0 || blockY <= 0");
+        }
+    }
+
+    /**
+     * Returns the average of all elements in <code>samples</code>;
+     * <code>xfrac</code> is ignored.
+     */
+    public int interpolateH(int[] samples, int xfrac) {
+        int numSamples = samples.length;
+        double total = 0.0;
+        for(int i = 0; i < numSamples; i++) {
+            total += samples[i]/numSamples;
+        }
+        return (int)(total + 0.5);
+    }
+
+    /**
+     * Returns the average of all elements in <code>samples</code>;
+     * <code>xfrac</code> is ignored.
+     */
+    public float interpolateH(float[] samples, float xfrac) {
+        int numSamples = samples.length;
+        float total = 0.0F;
+        for(int i = 0; i < numSamples; i++) {
+            total += samples[i]/numSamples;
+        }
+        return total;
+    }
+
+    /**
+     * Returns the average of all elements in <code>samples</code>;
+     * <code>xfrac</code> is ignored.
+     */
+    public double interpolateH(double[] samples, float xfrac) {
+        int numSamples = samples.length;
+        double total = 0.0;
+        for(int i = 0; i < numSamples; i++) {
+            total += samples[i]/numSamples;
+        }
+        return total;
+    }
+}

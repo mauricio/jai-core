@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>README-build: build instructions for the jai-core project</title>
+</head>
+<body>
+<h3><span style="font-weight: bold; text-decoration: underline;">Building
+the Java Advanced Imaging Packages</span></h3>
+<p><span style="text-decoration: underline;"><span
+ style="font-weight: bold;"></span></span><span
+ style="font-weight: bold; text-decoration: underline;"> </span></p>
+<p>To
+build the Java Advanced Imaging packages, you must first checkout the <a
+ href="http://jai-core.dev.java.net/">jai-core</a> CVS
+repository on java.net. For example, run
+the cvs checkout command as follows:<br>
+</p>
+<ul>
+  <code>cd &lt;cvs-root-dir&gt;</code><br>
+  <code>cvs checkout jai-core</code>
+</ul>
+<p></p>
+<h3><span style="font-weight: bold; text-decoration: underline;"></span><span
+ style="text-decoration: underline;">System Requirements</span></h3>
+<p><span style="font-weight: bold; text-decoration: underline;"></span></p>
+<p><span style="font-weight: bold; text-decoration: underline;"></span>
+Any operating environment that supports J2SE should work. We have built
+jai-core on the following operating
+environments:<br>
+</p>
+<ul>
+  <li>Solaris-sparc: Sparc (Ultra60 or better) running Solaris 9</li>
+  <li>Solaris-x86: i386/i586 running Solaris-x86 9<br>
+  </li>
+  <li>Linux: i386/i586 running SuSE 9 or RedHat 9.0</li>
+  <li>Windows: Windows/XP, Windows 2000</li>
+</ul>
+The following software must be installed:<br>
+<ul>
+  <li><a href="http://java.sun.com/j2se">J2SE 1.3&nbsp;</a> or later.
+Please note that jai-core currently does not successfully build with
+J2SE 5.0. This is a known issue that will be fixed in a future build<br>
+  </li>
+  <li><a href="http://jakarta.apache.org/ant">Apache Ant 1.6&nbsp;</a>
+or later </li>
+</ul>
+<p></p>
+<h3><span style="font-weight: bold; text-decoration: underline;">Building
+Java Advanced Imaging<br>
+</span></h3>
+<p><span style="font-weight: bold; text-decoration: underline;"></span><span
+ style="font-weight: bold; text-decoration: underline;"></span>Before
+you start building, your PATH must include the
+following directories:
+</p>
+<ul>
+  <li>&lt;ant-root-dir&gt;/bin<br>
+  </li>
+  <li>&lt;jdk-root-dir&gt;/bin</li>
+  <li>Setting JAVA_HOME or JAVACMD environment variable will supersede
+&lt;jdk-root-dir&gt;/bin for ant. For further details please refer to
+the ant manual.<br>
+  </li>
+</ul>
+<p>The default target, jar, creates both optimized and debug jar files.
+</p>
+To build:<br>
+<ul>
+  <code> cd &lt;cvs-root-dir&gt;/jai-core<br>
+ant</code>
+</ul>
+<p>The above steps build both the Java code for
+javax.media.jai.* and com.sun.media.jai.*
+packages. <br>
+</p>
+<p>The build will be placed in jai-core/build/&lt;platform&gt;/opt,
+where &lt;platform&gt; is determined from the <code>ant
+echo</code> command:
+</p>
+<ul>
+  <code>ant echo</code>
+</ul>
+Jar files are placed in <code>jai-core/build/&lt;platform&gt;/opt/lib/ext.</code>
+Binaries for native libraries are part of the project and are copied to
+the <code>jai-core/build/&lt;platform&gt;/opt/&lt;jrenativesubdir&gt;</code>
+directory as
+part of the build, where <code>&lt;jrenativesubdir&gt; </code>is
+determined from the <code>ant
+echo</code> command as above.<br>
+<br>
+To see other targets that are available, type "ant
+-projecthelp". Note that ant must be run from the top-level
+directory.
+<h3><span style="font-weight: bold; text-decoration: underline;">Running
+Java Advanced Imaging<br>
+</span></h3>
+To run Java Advanced Imaging, please checkout the <a
+ href="https://jai-demos.dev.java.net/">jai-demos</a> project and then
+refer to <a href="../jai-demos/README-build.html">README-build.html</a>
+in
+jai-demos for
+details
+on building and running Java Advanced Imaging demo programs.
+</body>
+</html>
