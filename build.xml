@@ -5,8 +5,8 @@ Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
  
 Use is subject to license terms.
  
-$Revision: 1.1 $
-$Date: 2005-02-11 04:55:28 $
+$Revision: 1.2 $
+$Date: 2005-02-17 02:18:31 $
 $State: Exp $
 -->
 <project name="jai" default="jar" basedir=".">
@@ -386,8 +386,7 @@ $State: Exp $
     </copy>
   </target>
 
-  <target name="compile" depends="codec-util"
-	  description="Executes targets compile-debug and compile-opt.">
+  <target name="compilation" depends="codec-util">
     <!-- Create the class file directory -->
     <mkdir dir="${classdir}"/>
 
@@ -427,16 +426,19 @@ $State: Exp $
   <target name="compile-debug" depends="codec-util,mlib-debug"
 	  description="Builds all classes with debug compilation.">
     <antcall target="debugcall">
-      <param name="targetname" value="compile"/>
+      <param name="targetname" value="compilation"/>
     </antcall>
   </target>
 
   <target name="compile-opt" depends="codec-util,mlib-opt"
 	  description="Builds all classes with non-debug compilation.">
     <antcall target="optcall">
-      <param name="targetname" value="compile"/>
+      <param name="targetname" value="compilation"/>
     </antcall>
   </target>
+
+  <target name="compile" depends="compile-debug,compile-opt"
+	  description="Executes targets compile-debug and compile-opt."/>
 
   <!-- Creates core manifest file. -->
   <target name="manifest-core">
