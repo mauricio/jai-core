@@ -5,25 +5,21 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:55 $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 02:07:43 $
  * $State: Exp $
  */
-package com.sun.media.jai.tes;
-import java.awt.Frame;
-import java.awt.GridLayout;
+package com.sun.media.jai.test;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.util.Map;
 import javax.media.jai.ImageLayout;
-import javax.media.jai.PlanarImage;
 import javax.media.jai.SourcelessOpImage;
 import javax.media.jai.RasterFactory;
-import javax.media.jai.TileCache;
-import javax.media.jai.widget.ScrollingImagePanel;
 
 /** Defines a checkerboard image for testing purpose. */
 final class CheckerboardOpImage extends SourcelessOpImage {
@@ -34,17 +30,15 @@ final class CheckerboardOpImage extends SourcelessOpImage {
 
     private int numColors;
 
-    public CheckerboardOpImage() {}
-
     /** Defines a checkerboard image of several grey shades. */
     public CheckerboardOpImage(int minX, int minY,
                                int width, int height,
                                SampleModel sampleModel,
-                               TileCache cache,
+                               Map configuration,
                                ImageLayout layout,
                                int checkerSize,
                                int numColors) {
-        super(minX, minY, width, height, sampleModel, cache, layout);
+        super(layout, configuration, sampleModel, minX, minY, width, height);
 
         if (numColors < 2) {
            numColors = 2;

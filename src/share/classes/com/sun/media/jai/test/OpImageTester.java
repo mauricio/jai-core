@@ -5,14 +5,13 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:56 $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 02:07:43 $
  * $State: Exp $
  */
 package com.sun.media.jai.test;
 import java.awt.Rectangle;
 import java.awt.Transparency;
-import java.awt.image.BandedSampleModel;
 import java.awt.color.ColorSpace;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
@@ -20,6 +19,7 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.util.Map;
 import java.lang.reflect.Method;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.OpImage;
@@ -81,6 +81,15 @@ public class OpImageTester {
                                 RasterFactory.createPixelInterleavedSampleModel(
                                              DataBuffer.TYPE_BYTE, 200, 200, 3),
                                  null,
+                                 layout);
+    }
+
+    public static OpImage createRandomOpImage(Map configuration, 
+					      ImageLayout layout) {
+        return new RandomOpImage(0, 0, 800, 800,
+                                RasterFactory.createPixelInterleavedSampleModel(
+                                             DataBuffer.TYPE_BYTE, 200, 200, 3),
+                                 configuration,
                                  layout);
     }
 
@@ -147,7 +156,7 @@ public class OpImageTester {
      */
     public static void testOpImage(OpImage dst, Rectangle dstRect) {
         for (int i = 0; i < dst.getNumSources(); i++) {
-            PlanarImage src = dst.getSource(i);
+            PlanarImage src = dst.getSourceImage(i);
             Rectangle srcRect = dst.mapDestRect(dstRect, i);
             String message = "Source " + (i+1) + ":";
             printPixels(message, src, srcRect);

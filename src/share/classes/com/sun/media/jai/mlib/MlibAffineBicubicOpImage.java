@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:48 $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 02:07:42 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -184,7 +184,7 @@ public class MlibAffineBicubicOpImage extends MlibAffineOpImage {
 //         return new MlibAffineBicubicOpImage(oit.getSource(), null, null,
 //                                             new ImageLayout(oit.getSource()),
 //                                             tr,
-//                                             interp);
+//                                             interp, null);
 //     }
 
 //     // Calls a method on OpImage that uses introspection, to make this

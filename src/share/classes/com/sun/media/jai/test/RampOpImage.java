@@ -5,36 +5,28 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:56 $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-24 02:07:44 $
  * $State: Exp $
  */
 package com.sun.media.jai.test;
-import java.awt.Frame;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.util.Map;
 import javax.media.jai.ImageLayout;
-import javax.media.jai.OpImage;
-import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.SourcelessOpImage;
-import javax.media.jai.TileCache;
-import javax.media.jai.widget.ScrollingImagePanel;
 
 /** Defines a ramp image for testing purpose. */
 final class RampOpImage extends SourcelessOpImage {
 
-    public RampOpImage() {}
-
     public RampOpImage(int minX, int minY, int width, int height, 
                        SampleModel sampleModel,
-                       TileCache cache, ImageLayout layout) {
-        super(minX, minY, width, height, sampleModel, cache, layout);
+                       Map configuration, ImageLayout layout) {
+        super(layout, configuration, sampleModel, minX, minY, width, height);
     }
 
     public Raster computeTile(int tileX, int tileY) {
