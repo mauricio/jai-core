@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:36 $
+ * $Revision: 1.2 $
+ * $Date: 2005-02-23 21:02:26 $
  * $State: Exp $
  */package com.sun.media.jai.opimage;
 
@@ -220,10 +220,10 @@ public class MosaicOpImage extends OpImage {
                         throw new IllegalArgumentException(JaiI18N.getString("MosaicOpImage4"));
                     } else if(alphaSM.getDataType() !=
                               sampleModel.getDataType()) {
-                        throw new IllegalArgumentException(JaiI18N.getString("MosaicOpImage4"));
+                        throw new IllegalArgumentException(JaiI18N.getString("MosaicOpImage5"));
                     } else if(alphaSM.getSampleSize(0) !=
                               sampleModel.getSampleSize(0)) {
-                        throw new IllegalArgumentException(JaiI18N.getString("MosaicOpImage4"));
+                        throw new IllegalArgumentException(JaiI18N.getString("MosaicOpImage6"));
                     }
                 }
             }
