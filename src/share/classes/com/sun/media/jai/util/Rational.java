@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:02 $
+ * $Revision: 1.2 $
+ * $Date: 2005-04-29 23:19:18 $
  * $State: Exp $
  */
 package com.sun.media.jai.util;
@@ -53,7 +53,7 @@ public class Rational {
         return r;
     }
     
-    private static final int MAX_TERMS = 8;
+    private static final int MAX_TERMS = 20;
     
     /**
      * Returns a Rational that is within the given tolerance
