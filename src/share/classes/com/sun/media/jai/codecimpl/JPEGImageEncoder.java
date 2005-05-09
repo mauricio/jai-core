@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:37 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-09 19:41:21 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -151,45 +151,69 @@ public class JPEGImageEncoder extends ImageEncoderImpl {
         // Create a BufferedImage to be encoded.
         // The JPEG interfaces really need a whole image.
         //
-        WritableRaster wRas;
         BufferedImage bi;
+        if(im instanceof BufferedImage) {
+            bi = (BufferedImage)im;
+        } else {
+            //
+            // Get a contiguous raster. Jpeg compression can't work
+            // on tiled data in most cases.
+            // Also need to be sure that the raster doesn't have a
+            // non-zero origin, since BufferedImage won't accept that.
+            // (Bug ID 4253990)
+            //
 
-        //
-        // Get a contiguous raster. Jpeg compression can't work
-        // on tiled data in most cases.
-        // Also need to be sure that the raster doesn't have a
-        // non-zero origin, since BufferedImage won't accept that.
-        // (Bug ID 4253990)
-        //
+            //Fix 4694162: JPEGImageEncoder throws ClassCastException
+            // Obtain the contiguous Raster.
+            Raster ras;
+            if(im.getNumXTiles() == 1 && im.getNumYTiles() == 1) {
+                // Image is not tiled so just get a reference to the tile.
+                ras = im.getTile(im.getMinTileX(), im.getMinTileY());
+            } else {
+                // Image is tiled so need to get a contiguous raster.
+                ras = im.getData();
+            }
 
-	//Fix 4694162: JPEGImageEncoder throws ClassCastException
-	Raster ras = im.getData();
-	if (ras instanceof WritableRaster)
-	    wRas = (WritableRaster)ras;
-	else
-	    wRas = Raster.createWritableRaster(ras.getSampleModel(),
-			ras.getDataBuffer(),
-			new Point(ras.getSampleModelTranslateX(),
-				  ras.getSampleModelTranslateY()));
-        if (wRas.getMinX() != 0 || wRas.getMinY() != 0) {
-            wRas = wRas.createWritableTranslatedChild(0, 0);
+            // Convert the Raster to a WritableRaster.
+            WritableRaster wRas;
+            if (ras instanceof WritableRaster) {
+                wRas = (WritableRaster)ras;
+            } else {
+                wRas = Raster.createWritableRaster(ras.getSampleModel(),
+                                                   ras.getDataBuffer(),
+                                                   new Point(ras.getSampleModelTranslateX(),
+                                                             ras.getSampleModelTranslateY()));
+            }
+
+            // Ensure that the WritableRaster has origin (0,0) and the
+            // same dimensions as the image (if derived from a single
+            // image tile, the tile dimensions might differ from the
+            // image dimensions.
+            if (wRas.getMinX() != 0 || wRas.getMinY() != 0 ||
+                wRas.getWidth() != im.getWidth() ||
+                wRas.getHeight() != im.getHeight())
+                wRas = wRas.createWritableChild(wRas.getMinX(),
+                                                wRas.getMinY(),
+                                                im.getWidth(),
+                                                im.getHeight(),
+                                                0, 0,
+                                                null);
+
+            bi = new BufferedImage(colorModel, wRas, false, null);
         }
 
-        // First create the Java2D encodeParam based on the BufferedImage
-        com.sun.image.codec.jpeg.JPEGEncodeParam j2dEP = null;
         if (colorModel instanceof IndexColorModel) {
             //
             // Need to expand the indexed data to components.
             // The convertToIntDiscrete method is used to perform this.
             //
             IndexColorModel icm = (IndexColorModel)colorModel;
-            bi = icm.convertToIntDiscrete(wRas, false);
-            j2dEP = com.sun.image.codec.jpeg.JPEGCodec.getDefaultJPEGEncodeParam(bi);
-        } else {
-            bi = new BufferedImage(colorModel, wRas, false, null);
-            j2dEP = com.sun.image.codec.jpeg.JPEGCodec.getDefaultJPEGEncodeParam(bi);
+            bi = icm.convertToIntDiscrete(bi.getRaster(), false);
         }
 
+        // Create the Java2D encodeParam based on the BufferedImage
+        com.sun.image.codec.jpeg.JPEGEncodeParam j2dEP =
+            com.sun.image.codec.jpeg.JPEGCodec.getDefaultJPEGEncodeParam(bi);
 
         // Now modify the Java2D encodeParam based on the options set
         // in the JAI encodeParam object.
