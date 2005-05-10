@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:37 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-10 01:03:23 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -249,6 +249,7 @@ public class NeuQuantOpImage extends ColorQuantizerOpImage {
         inxbuild();
         createLUT();
         setProperty("LUT", colorMap);
+        setProperty("JAI.LookupTable", colorMap);
     }
 
     private void createLUT() {

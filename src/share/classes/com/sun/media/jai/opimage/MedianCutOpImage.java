@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:33 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-10 01:03:22 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -155,6 +155,7 @@ public class MedianCutOpImage extends ColorQuantizerOpImage {
 
         medianCut(maxColorNum);
         setProperty("LUT", colorMap);
+        setProperty("JAI.LookupTable", colorMap);
     }
 
     private void computeHistogram(Raster source) {
