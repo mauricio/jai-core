@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:08 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-10 00:34:12 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -655,14 +655,24 @@ public abstract class GeometricOpImage extends OpImage {
             for (int i = 0; i < numSources; i++) {
                 PlanarImage source = getSource(i);
 
+                Rectangle srcBounds = source.getBounds();
                 Rectangle srcRect = mapDestRect(destRect, i);
                 if (srcRect == null) {
-                    srcRect = source.getBounds();
-                } else if(!srcRect.intersects(source.getBounds())) {
-		    if (setBackground) {
-			ImageUtil.fillBackground(dest, destRect, backgroundValues);
-		    }
-                    return dest;	// outside of source bounds
+                    // Set to source bounds.
+                    srcRect = srcBounds;
+                } else {
+                    if(extender == null && !srcBounds.contains(srcRect)) {
+                        // Clip to source bounds.
+                        srcRect = srcBounds.intersection(srcRect);
+                    }
+                    if(!srcRect.intersects(srcBounds)) {
+                        // Outside of source bounds.
+                        if (setBackground) {
+                            ImageUtil.fillBackground(dest, destRect,
+                                                     backgroundValues);
+                        }
+                        return dest;
+                    }
                 }
 
                 rasterSources[i] = extender != null ?

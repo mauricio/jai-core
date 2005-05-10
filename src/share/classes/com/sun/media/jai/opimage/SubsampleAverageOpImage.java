@@ -5,10 +5,11 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:44 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-10 00:34:12 $
  * $State: Exp $
- */package com.sun.media.jai.opimage;
+ */
+package com.sun.media.jai.opimage;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -159,8 +160,8 @@ public class SubsampleAverageOpImage extends GeometricOpImage {
         }
 
         Point2D pt = (Point2D)destPt.clone();
-        pt.setLocation(sourceMinX + (destPt.getX() - minX)/scaleX,
-                       sourceMinY + (destPt.getY() - minY)/scaleY);
+        pt.setLocation(sourceMinX + (destPt.getX() + 0.5 - minX)/scaleX - 0.5,
+                       sourceMinY + (destPt.getY() + 0.5 - minY)/scaleY - 0.5);
 
         return pt;
     }
@@ -171,8 +172,10 @@ public class SubsampleAverageOpImage extends GeometricOpImage {
         }
 
         Point2D pt = (Point2D)sourcePt.clone();
-        pt.setLocation(minX + (sourcePt.getX() - sourceMinX)*scaleX,
-                       minY + (sourcePt.getY() - sourceMinY)*scaleY);
+        pt.setLocation(minX +
+                       (sourcePt.getX() + 0.5 - sourceMinX)*scaleX - 0.5,
+                       minY +
+                       (sourcePt.getY() + 0.5 - sourceMinY)*scaleY - 0.5);
 
         return pt;
     }
@@ -187,14 +190,22 @@ public class SubsampleAverageOpImage extends GeometricOpImage {
                 (JaiI18N.getString("Generic1"));
         }
 
-        int x1 = sourceMinX +
-            (int)Math.floor((destRect.x - minX)/scaleX + 0.5);
-        int y1 = sourceMinY +
-            (int)Math.floor((destRect.y - minY)/scaleY + 0.5);
+        // Map the upper left pixel.
+        Point2D p1 = mapDestPoint(new Point2D.Double(destRect.x,
+                                                     destRect.y));
 
-        int x2 = x1 + (destRect.width - 1)*blockX;
-        int y2 = y1 + (destRect.height - 1)*blockY;
+        // Map the lower right pixel.
+        Point2D p2 =
+            mapDestPoint(new Point2D.Double(destRect.x + destRect.width - 1,
+                                            destRect.y + destRect.height - 1));
 
+        // Determine the integral positions.
+        int x1 = (int)Math.floor(p1.getX());
+        int y1 = (int)Math.floor(p1.getY());
+        int x2 = (int)Math.floor(p2.getX());
+        int y2 = (int)Math.floor(p2.getY());
+
+        // Return rectangle based on integral positions.
         return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
     }
 
@@ -208,12 +219,25 @@ public class SubsampleAverageOpImage extends GeometricOpImage {
                 (JaiI18N.getString("Generic1"));
         }
 
-        return new Rectangle(minX + (int)Math.floor((sourceRect.x -
-                                                     sourceMinX)*scaleX),
-                             minY + (int)Math.floor((sourceRect.y -
-                                                     sourceMinY)*scaleY),
-                             (int)Math.ceil(sourceRect.width*scaleX),
-                             (int)Math.ceil(sourceRect.height*scaleY));
+        // Map the upper left pixel.
+        Point2D p1 = mapSourcePoint(new Point2D.Double(sourceRect.x,
+                                                       sourceRect.y));
+
+        // Map the lower right pixel.
+        Point2D p2 =
+            mapSourcePoint(new Point2D.Double(sourceRect.x +
+                                              sourceRect.width - 1,
+                                              sourceRect.y +
+                                              sourceRect.height - 1));
+
+        // Determine the integral positions.
+        int x1 = (int)Math.floor(p1.getX());
+        int y1 = (int)Math.floor(p1.getY());
+        int x2 = (int)Math.floor(p2.getX());
+        int y2 = (int)Math.floor(p2.getY());
+
+        // Return rectangle based on integral positions.
+        return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
     }
 
     /**
@@ -225,7 +249,7 @@ public class SubsampleAverageOpImage extends GeometricOpImage {
      * @param dest     a WritableRaster  containing the area to be computed.
      * @param destRect the rectangle within dest to be processed.
      */
-        protected void computeRect(Raster [] sources,
+    protected void computeRect(Raster [] sources,
                                WritableRaster dest,
                                Rectangle destRect) {
         // Get RasterAccessor tags (initialized in OpImage superclass).
