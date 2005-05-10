@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-05-09 19:41:21 $
+ * $Revision: 1.3 $
+ * $Date: 2005-05-10 00:53:29 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -16,7 +16,9 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
+import java.awt.image.PackedColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -209,6 +211,29 @@ public class JPEGImageEncoder extends ImageEncoderImpl {
             //
             IndexColorModel icm = (IndexColorModel)colorModel;
             bi = icm.convertToIntDiscrete(bi.getRaster(), false);
+
+            if(bi.getSampleModel().getNumBands() == 4) {
+                //
+                // Without copying data create a BufferedImage which has
+                // only the RGB bands, not the alpha band.
+                //
+                WritableRaster rgbaRas = bi.getRaster();
+                WritableRaster rgbRas =
+                    rgbaRas.createWritableChild(0, 0,
+                                                bi.getWidth(), bi.getHeight(),
+                                                0, 0,
+                                                new int[] {0, 1, 2});
+                PackedColorModel pcm = (PackedColorModel)bi.getColorModel();
+                int bits =
+                    pcm.getComponentSize(0) +
+                    pcm.getComponentSize(1) +
+                    pcm.getComponentSize(2);
+                DirectColorModel dcm = new DirectColorModel(bits,
+                                                            pcm.getMask(0),
+                                                            pcm.getMask(1),
+                                                            pcm.getMask(2));
+                bi = new BufferedImage(dcm, rgbRas, false, null);
+            }
         }
 
         // Create the Java2D encodeParam based on the BufferedImage
