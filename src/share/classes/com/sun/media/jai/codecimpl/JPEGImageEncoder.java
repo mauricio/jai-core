@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.3 $
- * $Date: 2005-05-10 00:53:29 $
+ * $Revision: 1.4 $
+ * $Date: 2005-05-11 00:20:58 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -173,7 +173,23 @@ public class JPEGImageEncoder extends ImageEncoderImpl {
                 ras = im.getTile(im.getMinTileX(), im.getMinTileY());
             } else {
                 // Image is tiled so need to get a contiguous raster.
-                ras = im.getData();
+
+                // Create an interleaved raster for copying for 8-bit case.
+                // This ensures that for RGB data the band offsets are {0,1,2}.
+                // If the JPEG encoder encounters data with BGR offsets as
+                // {2,1,0} then it will make yet another copy of the data
+                // which might as well be averted here.
+                WritableRaster target = sampleModel.getSampleSize(0) == 8 ?
+                    Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
+                                                   im.getWidth(),
+                                                   im.getHeight(),
+                                                   sampleModel.getNumBands(),
+                                                   new Point(im.getMinX(),
+                                                             im.getMinY())) :
+                    null;
+
+                // Copy the data.
+                ras = im.copyData(target);
             }
 
             // Convert the Raster to a WritableRaster.
@@ -223,6 +239,11 @@ public class JPEGImageEncoder extends ImageEncoderImpl {
                                                 bi.getWidth(), bi.getHeight(),
                                                 0, 0,
                                                 new int[] {0, 1, 2});
+                //
+                // IndexColorModel.convertToIntDiscrete() is guaranteed
+                // to return an image which has a DirectColorModel which
+                // is a subclass of PackedColorModel.
+                //
                 PackedColorModel pcm = (PackedColorModel)bi.getColorModel();
                 int bits =
                     pcm.getComponentSize(0) +
