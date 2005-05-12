@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:27 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-12 18:24:32 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -121,7 +121,7 @@ public class FormatCRIF extends CRIFImpl {
                 // Remove TileCache hint from RenderingHints if present.
                 RenderingHints hints = renderHints;
                 if(hints != null && hints.containsKey(JAI.KEY_TILE_CACHE)) {
-                    hints = new RenderingHints(renderHints);
+                    hints = new RenderingHints((Map)renderHints);
                     hints.remove(JAI.KEY_TILE_CACHE);
                 }
 

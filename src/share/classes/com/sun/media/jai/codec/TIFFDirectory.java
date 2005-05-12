@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:34 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-12 18:24:30 $
  * $State: Exp $
  */
 package com.sun.media.jai.codec;
@@ -378,11 +378,11 @@ public class TIFFDirectory extends Object implements Serializable {
      */
     public int[] getTags() {
         int[] tags = new int[fieldIndex.size()];
-        Enumeration enum = fieldIndex.keys();
+        Enumeration enumeration = fieldIndex.keys();
         int i = 0;
 
-        while (enum.hasMoreElements()) {
-            tags[i++] = ((Integer)enum.nextElement()).intValue();
+        while (enumeration.hasMoreElements()) {
+            tags[i++] = ((Integer)enumeration.nextElement()).intValue();
         }
 
         return tags;

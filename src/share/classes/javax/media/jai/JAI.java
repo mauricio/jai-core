@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:11 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-12 18:24:33 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 import javax.media.jai.remote.NegotiableCapabilitySet;
 import javax.media.jai.tilecodec.TileCodecParameterList;
@@ -753,7 +754,7 @@ public final class JAI {
         } else if(defaultHints == null || defaultHints.isEmpty()) {
             mergedHints = hints;
         } else { // Both parameters are non-null and non-empty.
-            mergedHints = new RenderingHints(defaultHints);
+            mergedHints = new RenderingHints((Map)defaultHints);
             mergedHints.add(hints);
         }
 

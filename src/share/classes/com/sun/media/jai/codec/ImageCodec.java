@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:30 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-12 18:24:29 $
  * $State: Exp $
  */
 package com.sun.media.jai.codec;
@@ -247,12 +247,12 @@ public abstract class ImageCodec {
             throw new IllegalArgumentException(JaiI18N.getString("ImageCodec2"));
         }
 
-        Enumeration enum = codecs.elements();
+        Enumeration enumeration = codecs.elements();
         Vector nameVec = new Vector();
 
         String opName = null;
-        while (enum.hasMoreElements()) {
-            ImageCodec codec = (ImageCodec)enum.nextElement();
+        while (enumeration.hasMoreElements()) {
+            ImageCodec codec = (ImageCodec)enumeration.nextElement();
 
             int bytesNeeded = codec.getNumHeaderBytes();
             if ((bytesNeeded == 0) && !src.canSeekBackwards()) {
@@ -300,12 +300,12 @@ public abstract class ImageCodec {
      */
     public static String[] getEncoderNames(RenderedImage im,
                                            ImageEncodeParam param) {
-        Enumeration enum = codecs.elements();
+        Enumeration enumeration = codecs.elements();
         Vector nameVec = new Vector();
 
         String opName = null;
-        while (enum.hasMoreElements()) {
-            ImageCodec codec = (ImageCodec)enum.nextElement();
+        while (enumeration.hasMoreElements()) {
+            ImageCodec codec = (ImageCodec)enumeration.nextElement();
 
             if (codec.canEncodeImage(im, param)) {
                 nameVec.add(codec.getFormatName());

@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:21 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-12 18:24:34 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -240,9 +240,9 @@ final class Snapshot extends PlanarImage {
             // If there is a previous node, push tiles back to it
             if (prev != null) {
                 // Push tiles back to the previous Snapshot
-                Enumeration enum = tiles.elements();
-                while (enum.hasMoreElements()) {
-                    TileCopy tc = (TileCopy)enum.nextElement();
+                Enumeration enumeration = tiles.elements();
+                while (enumeration.hasMoreElements()) {
+                    TileCopy tc = (TileCopy)enumeration.nextElement();
                     if (!prev.hasTile(tc.tileX, tc.tileY)) {
                         prev.addTile(tc.tile, tc.tileX, tc.tileY);
                     }

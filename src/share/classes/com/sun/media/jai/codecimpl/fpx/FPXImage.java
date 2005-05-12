@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:41 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-12 18:24:31 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl.fpx;
@@ -795,11 +795,11 @@ public class FPXImage extends SimpleRenderedImage {
 
         int len = properties.size();
         String[] names = new String[len];
-        Enumeration enum = properties.keys();
+        Enumeration enumeration = properties.keys();
 
         int count = 0;
-        while (enum.hasMoreElements()) {
-            names[count++] = (String)enum.nextElement();
+        while (enumeration.hasMoreElements()) {
+            names[count++] = (String)enumeration.nextElement();
         }
 
         return names;

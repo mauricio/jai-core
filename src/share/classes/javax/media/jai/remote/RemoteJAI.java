@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:52 $
+ * $Revision: 1.2 $
+ * $Date: 2005-05-12 18:24:34 $
  * $State: Exp $
  */package javax.media.jai.remote;
 
@@ -20,6 +20,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Vector;
 import javax.media.jai.JAI;
 import javax.media.jai.OperationRegistry;
@@ -632,7 +633,7 @@ public class RemoteJAI {
         } else if (renderingHints.isEmpty()) {
             mergedHints = hints;
         } else {
-            mergedHints = new RenderingHints(renderingHints);
+            mergedHints = new RenderingHints((Map)renderingHints);
             mergedHints.add(hints);
         }
 
