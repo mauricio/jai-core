@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:15 $
+ * $Revision: 1.2 $
+ * $Date: 2005-07-29 20:27:49 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -137,8 +137,8 @@ import javax.media.jai.util.CaselessStringKey;
  * internal references up until the point where the entire graph is
  * detached from user space.  A solution is available in the form of
  * <em>Reference Objects</em>; see <a
- * href="http://java.sun.com/products/jdk/1.3/docs/guide/refobs/">
- * http://java.sun.com/products/jdk/1.3/docs/guide/refobs/</a> for
+ * href="http://java.sun.com/j2se/1.5.0/docs/guide/refobs/">
+ * http://java.sun.com/j2se/1.5.0/docs/guide/refobs/</a> for
  * more information.  These classes include <em>weak references</em>
  * that allow the Garbage Collector (GC) to collect objects they
  * reference, setting the reference to <code>null</code> in the process.
