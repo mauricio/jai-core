@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:53 $
+ * $Revision: 1.2 $
+ * $Date: 2005-08-15 22:17:03 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -65,19 +65,17 @@ public class MlibConvolveRIF implements RenderedImageFactory {
             return null;
         }
 
-        boolean centered = (kWidth == kJAI.getXOrigin() * 2 + 1) &&
-                           (kHeight == kJAI.getYOrigin() * 2 + 1);
-
-        if (kJAI.isSeparable() &&
-            kWidth >= 3 && kWidth <= 7 &&  kWidth == kHeight) {
+        if (kJAI.isSeparable() && (kWidth == kHeight) &&
+            (kWidth == 3 || kWidth == 5 || kWidth == 7)) {
             return new MlibSeparableConvolveOpImage(source,
                                                     extender, hints, layout,
                                                     kJAI);
-        } else if ((kWidth == 3 && kHeight == 3) ||
-                   (kWidth == 5 && kHeight == 5)) {
-            return new MlibConvolve3x3Or5x5OpImage(source,
-                                                   extender, hints, layout,
-                                                   kJAI);
+	} else if ((kWidth == kHeight) && 
+		   (kWidth == 2 || kWidth == 3 || kWidth == 4 || 
+		    kWidth == 5 || kWidth == 7)) {
+            return new MlibConvolveNxNOpImage(source,
+					      extender, hints, layout,
+					      kJAI);
         } else {
             return new MlibConvolveOpImage(source,
                                            extender, hints, layout,

@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:08 $
+ * $Revision: 1.2 $
+ * $Date: 2005-08-15 22:17:03 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -81,9 +81,9 @@ public class MlibUnsharpMaskRIF implements RenderedImageFactory {
                                                     kJAI);
         } else if ((kWidth == 3 && kHeight == 3) ||
                    (kWidth == 5 && kHeight == 5)) {
-            return new MlibConvolve3x3Or5x5OpImage(source,
-                                                   extender, hints, layout,
-                                                   kJAI);
+            return new MlibConvolveNxNOpImage(source,
+                                              extender, hints, layout,
+                                              kJAI);
         } else {
             return new MlibConvolveOpImage(source,
                                            extender, hints, layout,
