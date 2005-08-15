@@ -1,12 +1,12 @@
 /*
- * $RCSfile: MlibConvolve3x3Or5x5OpImage.java,v $
+ * $RCSfile: MlibConvolveNxNOpImage.java,v $
  *
  * Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
  *
  * Use is subject to license terms.
  *
  * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:52 $
+ * $Date: 2005-08-15 22:05:44 $
  * $State: Exp $
  */ 
 package com.sun.media.jai.mlib;
@@ -63,10 +63,9 @@ import com.sun.medialib.mlib.*;
  *
  * <p> The Kernel cannot be bigger in any dimension than the image data.
  *
- *
  * @see KernelJAI
  */
-final class MlibConvolve3x3Or5x5OpImage extends AreaOpImage {
+final class MlibConvolveNxNOpImage extends AreaOpImage {
 
     /**
      * The kernel with which to do the convolve operation.
@@ -82,7 +81,7 @@ final class MlibConvolve3x3Or5x5OpImage extends AreaOpImage {
     
 
     /**
-     * Creates a MlibConvolve3x3OpImage given the image source and
+     * Creates a MlibConvolveNxNOpImage given the image source and
      * pre-rotated convolution kernel.  The image dimensions are
      * derived from the source image.  The tile grid layout,
      * SampleModel, and ColorModel may optionally be specified by an
@@ -96,11 +95,11 @@ final class MlibConvolve3x3Or5x5OpImage extends AreaOpImage {
      *        SampleModel, and ColorModel, or null.
      * @param kernel the pre-rotated convolution KernelJAI.
      */
-    public MlibConvolve3x3Or5x5OpImage(RenderedImage source,
-                                       BorderExtender extender,
-                                       Map config,
-                                       ImageLayout layout,
-                                       KernelJAI kernel) {
+    public MlibConvolveNxNOpImage(RenderedImage source,
+				  BorderExtender extender,
+				  Map config,
+				  ImageLayout layout,
+				  KernelJAI kernel) {
 	super(source,
               layout,
               config,
@@ -135,9 +134,9 @@ final class MlibConvolve3x3Or5x5OpImage extends AreaOpImage {
             int mediaLibDataType =
                 MediaLibAccessor.getMediaLibDataType(formatTag);
             shift = Image.ConvKernelConvert(intkData,
-                                                            doublekData,
-                                                            kw,kh,
-                                                            mediaLibDataType);
+					    doublekData,
+					    kw,kh,
+					    mediaLibDataType);
         }
     }
 
@@ -177,13 +176,29 @@ final class MlibConvolve3x3Or5x5OpImage extends AreaOpImage {
                 if (shift == -1) {
                     setShift(formatTag);
                 }
-                if(kw == 3) {
+
+		if (kw == 2) {
+                    Image.Conv2x2(dstML[i],
+                                  srcML[i], intkData, shift,
+                                  ((1 << numBands)-1) ,
+                                  Constants.MLIB_EDGE_DST_NO_WRITE);
+                } else if (kw == 3) {
                     Image.Conv3x3(dstML[i],
                                   srcML[i], intkData, shift,
                                   ((1 << numBands)-1) ,
                                   Constants.MLIB_EDGE_DST_NO_WRITE);
-                } else {
+                } else if (kw == 4) {
+                    Image.Conv4x4(dstML[i],
+                                  srcML[i], intkData, shift,
+                                  ((1 << numBands)-1) ,
+                                  Constants.MLIB_EDGE_DST_NO_WRITE);
+                } else if (kw == 5) {
                     Image.Conv5x5(dstML[i],
+                                  srcML[i], intkData, shift,
+                                  ((1 << numBands)-1) ,
+                                  Constants.MLIB_EDGE_DST_NO_WRITE);
+                } else if (kw == 7) {
+                    Image.Conv7x7(dstML[i],
                                   srcML[i], intkData, shift,
                                   ((1 << numBands)-1) ,
                                   Constants.MLIB_EDGE_DST_NO_WRITE);
@@ -191,13 +206,28 @@ final class MlibConvolve3x3Or5x5OpImage extends AreaOpImage {
                 break;
             case DataBuffer.TYPE_FLOAT:
             case DataBuffer.TYPE_DOUBLE:
-                if(kw == 3) {
+                if (kw == 2) {
+                    Image.Conv2x2_Fp(dstML[i],
+                                     srcML[i], doublekData,
+                                     ((1 << numBands)-1) ,
+                                     Constants.MLIB_EDGE_DST_NO_WRITE);
+		} else if (kw == 3) {
                     Image.Conv3x3_Fp(dstML[i],
                                      srcML[i], doublekData,
                                      ((1 << numBands)-1) ,
                                      Constants.MLIB_EDGE_DST_NO_WRITE);
-                } else {
+		} else if (kw == 4) {
+                    Image.Conv4x4_Fp(dstML[i],
+                                     srcML[i], doublekData,
+                                     ((1 << numBands)-1) ,
+                                     Constants.MLIB_EDGE_DST_NO_WRITE);
+		} else if (kw == 5) {
                     Image.Conv5x5_Fp(dstML[i],
+                                     srcML[i], doublekData,
+                                     ((1 << numBands)-1) ,
+                                     Constants.MLIB_EDGE_DST_NO_WRITE);
+                } else if (kw == 7) {
+                    Image.Conv7x7_Fp(dstML[i],
                                      srcML[i], doublekData,
                                      ((1 << numBands)-1) ,
                                      Constants.MLIB_EDGE_DST_NO_WRITE);
