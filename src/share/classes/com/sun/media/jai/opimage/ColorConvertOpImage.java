@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:17 $
+ * $Revision: 1.2 $
+ * $Date: 2005-08-15 18:20:27 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -238,11 +238,22 @@ final class ColorConvertOpImage extends PointOpImage {
                                Rectangle destRect) {
 	WritableRaster tempRas = null;
 
+        // Save a reference to the source Raster.
+        Raster source = sources[0];
+
+        // Ensure the source Raster has the same bounds as the destination.
+        if(!destRect.equals(source.getBounds())) {
+            source = source.createChild(destRect.x, destRect.y,
+                                        destRect.width, destRect.height,
+                                        destRect.x, destRect.y,
+                                        null);
+        }
+
 	switch (caseNumber) {
 	// 1. When source and destination color spaces are all ColorSpaceJAI,
 	// convert via RGB color space
 	case 1:
-            tempRas = computeRectColorSpaceJAIToRGB(sources[0], srcParam, 
+            tempRas = computeRectColorSpaceJAIToRGB(source, srcParam, 
 						    null, tempParam);
             computeRectColorSpaceJAIFromRGB(tempRas, tempParam,
 					    dest, dstParam);
@@ -252,31 +263,31 @@ final class ColorConvertOpImage extends PointOpImage {
 	//    ColorSpaceJAI; then convert RGB to the destination
 	// 3. if the destination is RGB, convert using ColorSpaceJAI 
 	case 2:
-	    tempRas = computeRectColorSpaceJAIToRGB(sources[0], srcParam, 
+	    tempRas = computeRectColorSpaceJAIToRGB(source, srcParam, 
 						    null, tempParam);
 	    computeRectNonColorSpaceJAI(tempRas, tempParam, 
 					    dest, dstParam, destRect);
 	    break;
 	case 3:
-	    computeRectColorSpaceJAIToRGB(sources[0], srcParam, 
+	    computeRectColorSpaceJAIToRGB(source, srcParam, 
 					      dest, dstParam);
 	    break;
 	// 4, 5. When only the destination color space is ColorSpaceJAI,
 	// similar to the case above.
 	case 4:
-	    tempRas =createTempWritableRaster(sources[0]);
-	    computeRectNonColorSpaceJAI(sources[0], srcParam, 
+	    tempRas =createTempWritableRaster(source);
+	    computeRectNonColorSpaceJAI(source, srcParam, 
 					tempRas, tempParam, destRect);
 	    computeRectColorSpaceJAIFromRGB(tempRas, tempParam, 
 					    dest, dstParam);
 	    break;
 	case 5:
-	    computeRectColorSpaceJAIFromRGB(sources[0], srcParam,
+	    computeRectColorSpaceJAIFromRGB(source, srcParam,
 					    dest, dstParam);
 	    break;
 	// 6. If all the color space are not ColorSpaceJAI
 	case 6:
-	    computeRectNonColorSpaceJAI(sources[0], srcParam, 
+	    computeRectNonColorSpaceJAI(source, srcParam, 
 					dest, dstParam, destRect);
 	default :
 	    break;
