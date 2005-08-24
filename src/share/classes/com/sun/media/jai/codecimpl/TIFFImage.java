@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:39 $
+ * $Revision: 1.2 $
+ * $Date: 2005-08-24 01:30:21 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -1953,11 +1953,12 @@ public class TIFFImage extends SimpleRenderedImage {
 	}
 
 	int srcCount = 0, dstCount = 0;
+        int srcArraySize = data.length;
 	byte repeat, b;
 
 	try {
 
-	    while (dstCount < arraySize) {
+	    while (dstCount < arraySize && srcCount < srcArraySize) {
 
 		b = data[srcCount++];
 
