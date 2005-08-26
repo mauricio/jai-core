@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-05-10 00:34:12 $
+ * $Revision: 1.3 $
+ * $Date: 2005-08-26 23:51:40 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -260,10 +260,15 @@ public class SubsampleAverageOpImage extends GeometricOpImage {
                                                 formatTags[1],
                                                 getColorModel());
 
+        // Backward map destination rectangle to source and clip to the
+        // source image bounds (mapDestRect() does not clip automatically).
+        Rectangle srcRect =
+            mapDestRect(destRect, 0).intersection(sources[0].getBounds());
+
         // Get source accessor.
         RasterAccessor src =
             new RasterAccessor(sources[0],
-                               mapDestRect(destRect, 0),
+                               srcRect,
                                formatTags[0], 
                                getSourceImage(0).getColorModel());
 
