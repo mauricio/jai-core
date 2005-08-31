@@ -5,8 +5,8 @@
 #
 # Use is subject to license terms.
 #
-# $Revision: 1.1 $
-# $Date: 2005-02-11 04:57:26 $
+# $Revision: 1.2 $
+# $Date: 2005-08-31 22:35:25 $
 # $State: Exp $
 #
 # The master JAI registry initialization file
@@ -197,6 +197,7 @@ rendered    com.sun.media.jai.mlib.MlibBinarizeRIF		com.sun.media.jai	binarize		
 rendered    com.sun.media.jai.opimage.BMPRIF			com.sun.media.jai	bmp			sunbmprif
 rendered    com.sun.media.jai.opimage.BorderRIF			com.sun.media.jai	border			sunborderrif
 rendered    com.sun.media.jai.opimage.BoxFilterRIF		com.sun.media.jai	boxfilter		sunboxfilterrif
+rendered    com.sun.media.jai.mlib.MlibBoxFilterRIF		com.sun.media.jai	boxfilter		mlibboxfilterrif
 rendered    com.sun.media.jai.opimage.ClampCRIF			com.sun.media.jai	clamp			sunclamprif
 rendered    com.sun.media.jai.mlib.MlibClampRIF			com.sun.media.jai	clamp			mlibclamprif
 rendered    com.sun.media.jai.opimage.ColorConvertCRIF		com.sun.media.jai	colorconvert		suncolorconvertrif
@@ -436,6 +437,7 @@ pref	rendered	andconst	com.sun.media.jai	mlibandconstrif	sunandconstrif
 pref	rendered	bandcombine	com.sun.media.jai	mlibbandcombinerif	sunbandcombinerif
 pref	rendered	bandselect	com.sun.media.jai	mlibbandselectrif	sunbandselectrif
 pref	rendered	binarize	com.sun.media.jai	mlibbinarizerif	sunbinarizerif
+pref	rendered	boxfilter	com.sun.media.jai	mlibboxfilterrif	sunboxfilterrif
 pref	rendered	clamp		com.sun.media.jai	mlibclamprif	sunclamprif
 pref	rendered	composite	com.sun.media.jai	mlibcompositerif	suncompositerif
 pref	rendered	convolve	com.sun.media.jai	mlibconvolverif	sunconvolverif
