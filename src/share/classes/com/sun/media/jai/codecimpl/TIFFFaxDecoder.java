@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:39 $
+ * $Revision: 1.2 $
+ * $Date: 2005-09-13 20:20:47 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -963,6 +963,9 @@ class TIFFFaxDecoder {
 		if (code == 0) { // Pass
 		    // We always assume WhiteIsZero format for fax.
                     if (!isWhite) {
+                        if(b2 > w) {
+                            b2 = w;
+                        }
                         setToBlack(buffer, lineOffset, bitOffset, 
                                    b2 - bitOffset);
                     }
@@ -983,12 +986,18 @@ class TIFFFaxDecoder {
 			cce[currIndex++] = bitOffset;
 
 			number = decodeBlackCodeWord();
+                        if(number > w - bitOffset) {
+                            number = w - bitOffset;
+                        }
                         setToBlack(buffer, lineOffset, bitOffset, number);
                         bitOffset += number;
 			cce[currIndex++] = bitOffset;
 		    } else {
 			// First a black run and then a white run follows
 			number = decodeBlackCodeWord();
+                        if(number > w - bitOffset) {
+                            number = w - bitOffset;
+                        }
                         setToBlack(buffer, lineOffset, bitOffset, number);
                         bitOffset += number;
 			cce[currIndex++] = bitOffset;
@@ -1006,6 +1015,9 @@ class TIFFFaxDecoder {
 		    // We write the current color till a1 - 1 pos,
 		    // since a1 is where the next color starts
                     if (!isWhite) {
+                        if(a1 > w) {
+                            a1 = w;
+                        }
                         setToBlack(buffer, lineOffset, bitOffset,
                                    a1 - bitOffset);
                     }
