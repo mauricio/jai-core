@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:39 $
+ * $Revision: 1.2 $
+ * $Date: 2005-09-13 17:52:33 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -225,6 +225,11 @@ class TIFFFaxEncoder {
         }
 
         int next  = base + (bitOffset>>>3);
+        // If the offset is beyond the data already then the minimum of the
+        // current offset and maxOffset must be maxOffset.
+        if(next >= data.length) {
+            return maxOffset;
+        }
         int end   = base + (maxOffset>>>3);
         if(end == data.length) { // Prevents out of bounds exception below
             end--;
