@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-05-12 18:24:30 $
+ * $Revision: 1.3 $
+ * $Date: 2005-09-19 21:52:04 $
  * $State: Exp $
  */
 package com.sun.media.jai.codec;
@@ -222,115 +222,130 @@ public class TIFFDirectory extends Object implements Serializable {
             fieldIndex.put(new Integer(tag), new Integer(i));
             Object obj = null;
 
-            switch (type) {
-            case TIFFField.TIFF_BYTE:
-            case TIFFField.TIFF_SBYTE:
-            case TIFFField.TIFF_UNDEFINED:
-            case TIFFField.TIFF_ASCII:
-                byte[] bvalues = new byte[count];
-                stream.readFully(bvalues, 0, count);
+            try {
+                switch (type) {
+                case TIFFField.TIFF_BYTE:
+                case TIFFField.TIFF_SBYTE:
+                case TIFFField.TIFF_UNDEFINED:
+                case TIFFField.TIFF_ASCII:
+                    byte[] bvalues = new byte[count];
+                    stream.readFully(bvalues, 0, count);
 
-		if (type == TIFFField.TIFF_ASCII) {
+                    if (type == TIFFField.TIFF_ASCII) {
 
-		    // Can be multiple strings
-		    int index = 0, prevIndex = 0;
-		    Vector v = new Vector();
+                        // Can be multiple strings
+                        int index = 0, prevIndex = 0;
+                        Vector v = new Vector();
 
-		    while (index < count) {
+                        while (index < count) {
 			
-                        while ((index < count) && (bvalues[index++] != 0));
+                            while ((index < count) && (bvalues[index++] != 0));
 
-			// When we encountered zero, means one string has ended
-			v.add(new String(bvalues, prevIndex, 
-					 (index - prevIndex)) );
-			prevIndex = index;
-		    }
+                            // When we encountered zero, means one string has ended
+                            v.add(new String(bvalues, prevIndex, 
+                                             (index - prevIndex)) );
+                            prevIndex = index;
+                        }
 
-		    count = v.size();
-		    String strings[] = new String[count];
-		    for (int c = 0 ; c < count; c++) {
-			strings[c] = (String)v.elementAt(c);
-		    }
+                        count = v.size();
+                        String strings[] = new String[count];
+                        for (int c = 0 ; c < count; c++) {
+                            strings[c] = (String)v.elementAt(c);
+                        }
 
-		    obj = strings;
-		} else {
-		    obj = bvalues;
-		}
+                        obj = strings;
+                    } else {
+                        obj = bvalues;
+                    }
 
-                break;
+                    break;
 
-            case TIFFField.TIFF_SHORT:
-                char[] cvalues = new char[count];
-                for (j = 0; j < count; j++) {
-		    cvalues[j] = (char)(readUnsignedShort(stream));
-                }
-                obj = cvalues;
-                break;
+                case TIFFField.TIFF_SHORT:
+                    char[] cvalues = new char[count];
+                    for (j = 0; j < count; j++) {
+                        cvalues[j] = (char)(readUnsignedShort(stream));
+                    }
+                    obj = cvalues;
+                    break;
                 
-            case TIFFField.TIFF_LONG:
-                long[] lvalues = new long[count];
-                for (j = 0; j < count; j++) {
-                    lvalues[j] = readUnsignedInt(stream);
-                }
-                obj = lvalues;
-                break;
+                case TIFFField.TIFF_LONG:
+                    long[] lvalues = new long[count];
+                    for (j = 0; j < count; j++) {
+                        lvalues[j] = readUnsignedInt(stream);
+                    }
+                    obj = lvalues;
+                    break;
                 
-            case TIFFField.TIFF_RATIONAL:
-                long[][] llvalues = new long[count][2];
-                for (j = 0; j < count; j++) {
-                    llvalues[j][0] = readUnsignedInt(stream);
-                    llvalues[j][1] = readUnsignedInt(stream);
-                }
-		obj = llvalues;
-                break;
+                case TIFFField.TIFF_RATIONAL:
+                    long[][] llvalues = new long[count][2];
+                    for (j = 0; j < count; j++) {
+                        llvalues[j][0] = readUnsignedInt(stream);
+                        llvalues[j][1] = readUnsignedInt(stream);
+                    }
+                    obj = llvalues;
+                    break;
                 
-            case TIFFField.TIFF_SSHORT:
-                short[] svalues = new short[count];
-                for (j = 0; j < count; j++) {
-		    svalues[j] = readShort(stream);
-                }
-                obj = svalues;
-                break;
+                case TIFFField.TIFF_SSHORT:
+                    short[] svalues = new short[count];
+                    for (j = 0; j < count; j++) {
+                        svalues[j] = readShort(stream);
+                    }
+                    obj = svalues;
+                    break;
                 
-            case TIFFField.TIFF_SLONG:
-                int[] ivalues = new int[count];
-                for (j = 0; j < count; j++) {
-                    ivalues[j] = readInt(stream);
-                }
-                obj = ivalues;
-                break;
+                case TIFFField.TIFF_SLONG:
+                    int[] ivalues = new int[count];
+                    for (j = 0; j < count; j++) {
+                        ivalues[j] = readInt(stream);
+                    }
+                    obj = ivalues;
+                    break;
                 
-            case TIFFField.TIFF_SRATIONAL:
-                int[][] iivalues = new int[count][2];
-                for (j = 0; j < count; j++) {
-                    iivalues[j][0] = readInt(stream);
-                    iivalues[j][1] = readInt(stream);
-                }
-                obj = iivalues;
-                break;
+                case TIFFField.TIFF_SRATIONAL:
+                    int[][] iivalues = new int[count][2];
+                    for (j = 0; j < count; j++) {
+                        iivalues[j][0] = readInt(stream);
+                        iivalues[j][1] = readInt(stream);
+                    }
+                    obj = iivalues;
+                    break;
 
-            case TIFFField.TIFF_FLOAT:
-                float[] fvalues = new float[count];
-                for (j = 0; j < count; j++) {
-                    fvalues[j] = readFloat(stream);
-                }
-                obj = fvalues;
-                break;
+                case TIFFField.TIFF_FLOAT:
+                    float[] fvalues = new float[count];
+                    for (j = 0; j < count; j++) {
+                        fvalues[j] = readFloat(stream);
+                    }
+                    obj = fvalues;
+                    break;
 
-            case TIFFField.TIFF_DOUBLE:
-                double[] dvalues = new double[count];
-                for (j = 0; j < count; j++) {
-                    dvalues[j] = readDouble(stream);
-                }
-                obj = dvalues;
-                break;
+                case TIFFField.TIFF_DOUBLE:
+                    double[] dvalues = new double[count];
+                    for (j = 0; j < count; j++) {
+                        dvalues[j] = readDouble(stream);
+                    }
+                    obj = dvalues;
+                    break;
 
-            default:
-                System.err.println(JaiI18N.getString("TIFFDirectory0"));
-                break;
+                default:
+                    System.err.println(JaiI18N.getString("TIFFDirectory0"));
+                    break;
+                }
+
+                fields[i] = new TIFFField(tag, type, count, obj);
+            } catch(EOFException eofe) {
+                // The TIFF 6.0 fields have tag numbers less than or equal
+                // to 532 (ReferenceBlackWhite) or equal to 33432 (Copyright).
+                // If there is an error reading a baseline tag, then re-throw
+                // the exception and fail; otherwise continue with the next
+                // field.
+                if(tag <= 532 || tag == 33432) {
+                    throw eofe;
+                }
+
+                fieldIndex.remove(new Integer(tag));
+                // XXX Warning message
             }
 
-            fields[i] = new TIFFField(tag, type, count, obj);
             stream.seek(nextTagOffset);
         }
 
