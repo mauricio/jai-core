@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-08-24 01:30:21 $
+ * $Revision: 1.3 $
+ * $Date: 2005-10-21 00:18:01 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -599,26 +599,23 @@ public class TIFFImage extends SimpleRenderedImage {
 	    TIFFField tileByteCountsField =
                 dir.getField(TIFFImageDecoder.TIFF_STRIP_BYTE_COUNTS);
             if(tileByteCountsField == null) {
-                if(compression == COMP_NONE) {
-                    // Attempt to infer the number of bytes in each strip.
-                    int totalBytes = ((sampleSize+7)/8)*numBands*width*height;
-                    int bytesPerStrip =
-                        ((sampleSize+7)/8)*numBands*width*tileHeight;
-                    int cumulativeBytes = 0;
-                    tileByteCounts = new long[tileOffsets.length];
-                    for(int i = 0; i < tileOffsets.length; i++) {
-                        tileByteCounts[i] =
-                            Math.min(totalBytes - cumulativeBytes,
-                                     bytesPerStrip);
-                        cumulativeBytes += bytesPerStrip;
-                    }
-                } else {
-                    // Field was null: re-requesting it will throw an
-                    // exception which is what is needed here.
-                    tileByteCountsField =
-                        getField(dir,
-                                 TIFFImageDecoder.TIFF_STRIP_BYTE_COUNTS,
-                                 "Strip Byte Counts");
+                // Attempt to infer the number of bytes in each strip.
+                int totalBytes = ((sampleSize+7)/8)*numBands*width*height;
+                int bytesPerStrip =
+                    ((sampleSize+7)/8)*numBands*width*tileHeight;
+                int cumulativeBytes = 0;
+                tileByteCounts = new long[tileOffsets.length];
+                for(int i = 0; i < tileOffsets.length; i++) {
+                    tileByteCounts[i] =
+                        Math.min(totalBytes - cumulativeBytes,
+                                 bytesPerStrip);
+                    cumulativeBytes += bytesPerStrip;
+                }
+
+                if(compression != COMP_NONE) {
+                    // Replace the stream with one that will not throw
+                    // an EOFException when it runs past the end.
+                    this.stream = new NoEOFStream(stream);
                 }
             } else {
                 tileByteCounts = getFieldAsLongs(tileByteCountsField);
@@ -2052,5 +2049,43 @@ public class TIFFImage extends SimpleRenderedImage {
         }
 
 	return ccm;
+    }
+}
+
+/**
+ * Wrapper class for a <code>SeekableStream</code> but which does not throw
+ * an <code>EOFException</code> from <code>readFully()</code> when the end
+ * of stream is encountered.
+ */
+// NB This is a hack to fix bug 4823200 "Make TIFF decoder robust to (comp)
+// images with no strip/tile byte counts field" but there does not seem to
+// be any other way to work around this without extensive code changes.
+class NoEOFStream extends SeekableStream {
+    private SeekableStream stream;
+
+    NoEOFStream(SeekableStream ss) {
+        if(ss == null) {
+            throw new IllegalArgumentException();
+        }
+
+        this.stream = ss;
+    }
+
+    public int read() throws IOException {
+        int b = stream.read();
+        return b < 0 ? 0 : b;
+    }
+
+    public int read(byte[] b, int off, int len) throws IOException {
+        int count = stream.read(b, off, len);
+        return count < 0 ? len : count;
+    }
+
+    public long getFilePointer() throws IOException {
+        return stream.getFilePointer();
+    }
+
+    public void seek(long pos) throws IOException {
+        stream.seek(pos);
     }
 }
