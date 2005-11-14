@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.4 $
- * $Date: 2005-05-11 00:20:58 $
+ * $Revision: 1.5 $
+ * $Date: 2005-11-14 22:44:48 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -146,7 +146,7 @@ public class JPEGImageEncoder extends ImageEncoderImpl {
         int cspaceType = colorModel.getColorSpace().getType();
         if (cspaceType != ColorSpace.TYPE_GRAY &&
             cspaceType != ColorSpace.TYPE_RGB) {
-            throw new Error(JaiI18N.getString("JPEGImageEncoder1"));
+            throw new RuntimeException(JaiI18N.getString("JPEGImageEncoder1"));
         }
 
         //

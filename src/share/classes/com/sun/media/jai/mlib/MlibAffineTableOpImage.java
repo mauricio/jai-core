@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:49 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-14 22:45:29 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -216,7 +216,7 @@ public class MlibAffineTableOpImage extends MlibAffineOpImage {
 
         default:
             String className = this.getClass().getName();
-            throw new Error(JaiI18N.getString("Generic2"));
+            throw new RuntimeException(JaiI18N.getString("Generic2"));
         }
 
         if (dstAccessor.isDataCopy()) {

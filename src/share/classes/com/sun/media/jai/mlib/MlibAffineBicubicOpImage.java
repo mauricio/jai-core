@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-02-24 02:07:42 $
+ * $Revision: 1.3 $
+ * $Date: 2005-11-14 22:45:29 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -165,7 +165,7 @@ public class MlibAffineBicubicOpImage extends MlibAffineOpImage {
 
         default:
             String className = this.getClass().getName();
-            throw new Error(JaiI18N.getString("Generic2"));
+            throw new RuntimeException(JaiI18N.getString("Generic2"));
         }
 
         if (dstAccessor.isDataCopy()) {

@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:39 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-14 22:44:48 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -202,14 +202,14 @@ public class TIFFImageEncoder extends ImageEncoderImpl {
 	int sampleSize[] = sampleModel.getSampleSize();
         for(int i = 1; i < sampleSize.length; i++) {
             if(sampleSize[i] != sampleSize[0]) {
-                throw new Error(JaiI18N.getString("TIFFImageEncoder0"));
+                throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder0"));
             }
         }
 
         // Check low bit limits.
 	int numBands = sampleModel.getNumBands();
         if((sampleSize[0] == 1 || sampleSize[0] == 4) && numBands != 1) {
-            throw new Error(JaiI18N.getString("TIFFImageEncoder1"));
+            throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder1"));
         }
 
         // Retrieve and verify data type.
@@ -218,23 +218,23 @@ public class TIFFImageEncoder extends ImageEncoderImpl {
         case DataBuffer.TYPE_BYTE:
             if(sampleSize[0] != 1 && sampleSize[0] != 4 &&
                sampleSize[0] != 8) {
-                throw new Error(JaiI18N.getString("TIFFImageEncoder2"));
+                throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder2"));
             }
             break;
         case DataBuffer.TYPE_SHORT:
         case DataBuffer.TYPE_USHORT:
             if(sampleSize[0] != 16) {
-                throw new Error(JaiI18N.getString("TIFFImageEncoder3"));
+                throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder3"));
             }
             break;
         case DataBuffer.TYPE_INT:
         case DataBuffer.TYPE_FLOAT:
             if(sampleSize[0] != 32) {
-                throw new Error(JaiI18N.getString("TIFFImageEncoder4"));
+                throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder4"));
             }
             break;
         default:
-	    throw new Error(JaiI18N.getString("TIFFImageEncoder5"));
+	    throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder5"));
 	}
 
         boolean dataTypeIsShort =
@@ -246,7 +246,7 @@ public class TIFFImageEncoder extends ImageEncoderImpl {
             colorModel instanceof IndexColorModel &&
             dataType != DataBuffer.TYPE_BYTE) {
             // Don't support (unsigned) short palette-color images.
-	    throw new Error(JaiI18N.getString("TIFFImageEncoder6"));
+	    throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder6"));
         }
 	IndexColorModel icm = null;
 	int sizeOfColormap = 0;	
@@ -354,18 +354,18 @@ public class TIFFImageEncoder extends ImageEncoderImpl {
         }
 
         if(imageType == TIFF_UNSUPPORTED) {
-            throw new Error(JaiI18N.getString("TIFFImageEncoder8"));
+            throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder8"));
         }
 
         // Check JPEG compatibility.
         if(compression == COMP_JPEG_TTN2) {
             if(imageType == TIFF_PALETTE) {
-                throw new Error(JaiI18N.getString("TIFFImageEncoder11"));
+                throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder11"));
             } else if(!(sampleSize[0] == 8 &&
                         (imageType == TIFF_GRAY ||
                          imageType == TIFF_RGB ||
                          imageType == TIFF_YCBCR))) {
-                throw new Error(JaiI18N.getString("TIFFImageEncoder9"));
+                throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder9"));
             }
         }
 
@@ -375,7 +375,7 @@ public class TIFFImageEncoder extends ImageEncoderImpl {
            (compression == COMP_GROUP3_1D ||
             compression == COMP_GROUP3_2D ||
             compression == COMP_GROUP4)) {
-            throw new Error(JaiI18N.getString("TIFFImageEncoder12"));
+            throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder12"));
         }
 	
 	int photometricInterpretation = -1;
@@ -438,7 +438,7 @@ public class TIFFImageEncoder extends ImageEncoderImpl {
             break;
 
         default:
-            throw new Error(JaiI18N.getString("TIFFImageEncoder8"));
+            throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder8"));
 	}
 
         // Initialize tile dimensions.
@@ -1718,7 +1718,7 @@ public class TIFFImageEncoder extends ImageEncoderImpl {
             break;
 	    
         default:
-            throw new Error(JaiI18N.getString("TIFFImageEncoder10"));
+            throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder10"));
 	}
 	
     }
@@ -1818,7 +1818,7 @@ public class TIFFImageEncoder extends ImageEncoderImpl {
             break;
 
         default:
-            throw new Error(JaiI18N.getString("TIFFImageEncoder10"));
+            throw new RuntimeException(JaiI18N.getString("TIFFImageEncoder10"));
 
 	}
 

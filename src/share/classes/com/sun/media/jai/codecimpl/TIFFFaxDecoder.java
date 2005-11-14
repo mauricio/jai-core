@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-09-13 20:20:47 $
+ * $Revision: 1.3 $
+ * $Date: 2005-11-14 22:44:48 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -609,7 +609,7 @@ class TIFFFaxDecoder {
 
 		    updatePointer(4 - bits);
 		} else if (bits == 0) {     // ERROR
-		    throw new Error(JaiI18N.getString("TIFFFaxDecoder0"));
+		    throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder0"));
 		} else if (bits == 15) {    // EOL
 		    //throw new Error(JaiI18N.getString("TIFFFaxDecoder1"));
                     //
@@ -764,7 +764,7 @@ class TIFFFaxDecoder {
 
 	// The data must start with an EOL code
 	if (readEOL(true) != 1) {
-	    throw new Error(JaiI18N.getString("TIFFFaxDecoder3"));
+	    throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder3"));
 	}
 
         int lineOffset = 0;
@@ -866,7 +866,7 @@ class TIFFFaxDecoder {
                             
                         updatePointer(7 - bits);
 		    } else {
-			throw new Error(JaiI18N.getString("TIFFFaxDecoder4"));
+			throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder4"));
 		    }
 		}
                 
@@ -1027,7 +1027,7 @@ class TIFFFaxDecoder {
 		    updatePointer(7 - bits);
 		} else if (code == 11) {
 		    if (nextLesserThan8Bits(3) != 7) {
-			throw new Error(JaiI18N.getString("TIFFFaxDecoder5"));
+			throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder5"));
 		    }
 
 		    int zeros = 0;
@@ -1093,7 +1093,7 @@ class TIFFFaxDecoder {
 
 		    }
 		} else {
-		    throw new Error(JaiI18N.getString("TIFFFaxDecoder5"));
+		    throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder5"));
 		}
 	    }
 
@@ -1169,9 +1169,9 @@ class TIFFFaxDecoder {
                 runLength += code;
 		updatePointer(4 - bits);
 	    } else if (bits == 0) {     // ERROR
-		throw new Error(JaiI18N.getString("TIFFFaxDecoder0"));
+		throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder0"));
 	    } else if (bits == 15) {    // EOL
-		throw new Error(JaiI18N.getString("TIFFFaxDecoder1"));
+		throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder1"));
 	    } else {
 		// 11 bits - 0000 0111 1111 1111 = 0x07ff
 		code = (entry >>> 5) & 0x07ff;  
@@ -1222,7 +1222,7 @@ class TIFFFaxDecoder {
 		    updatePointer(4 - bits);
 		} else if (bits == 15) {
 		    // EOL code
-		    throw new Error(JaiI18N.getString("TIFFFaxDecoder2"));
+		    throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder2"));
 		} else {
                     runLength += code;
 		    updatePointer(9 - bits);
@@ -1288,7 +1288,7 @@ class TIFFFaxDecoder {
         if(oneD == 0) {
             // Seek to the next EOL.
             if(!seekEOL()) {
-                throw new Error(JaiI18N.getString("TIFFFaxDecoder9"));
+                throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder9"));
             }
         }
 
@@ -1310,7 +1310,7 @@ class TIFFFaxDecoder {
                 }
 	    }
             if(next12Bits != 1) {
-                throw new Error(JaiI18N.getString("TIFFFaxDecoder6"));
+                throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder6"));
             }
 	} else if (fillBits == 1) {
 
@@ -1321,7 +1321,7 @@ class TIFFFaxDecoder {
 	    int bitsLeft = 8 - bitPointer;
 
 	    if (nextNBits(bitsLeft) != 0) {
-		    throw new Error(JaiI18N.getString("TIFFFaxDecoder8"));
+		    throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder8"));
 	    }
 
 	    // If the number of bitsLeft is less than 4, then to have a 12
@@ -1330,7 +1330,7 @@ class TIFFFaxDecoder {
 	    // that.
 	    if (bitsLeft < 4) {
 		if (nextNBits(8) != 0) {
-		    throw new Error(JaiI18N.getString("TIFFFaxDecoder8"));
+		    throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder8"));
 		}
 	    }
 
@@ -1359,7 +1359,7 @@ class TIFFFaxDecoder {
                 while(next8 != 1) {
                     // If not all zeros
                     if (next8 != 0) {
-                        throw new Error(JaiI18N.getString("TIFFFaxDecoder8"));
+                        throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder8"));
                     }
                     next8 = nextNBits(8);
                 }
@@ -1438,7 +1438,7 @@ class TIFFFaxDecoder {
 		next2next = flipTable[data[bp + 2] & 0xff];
 	    }
 	} else {
-	    throw new Error(JaiI18N.getString("TIFFFaxDecoder7"));
+	    throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder7"));
 	}
 
 	int bitsLeft = 8 - bitPointer;
@@ -1495,7 +1495,7 @@ class TIFFFaxDecoder {
 		next = flipTable[data[bp + 1] & 0xff];
 	    }
 	} else {
-	    throw new Error(JaiI18N.getString("TIFFFaxDecoder7"));
+	    throw new RuntimeException(JaiI18N.getString("TIFFFaxDecoder7"));
 	}
 
 	int bitsLeft = 8 - bitPointer;
