@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:34 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-14 22:44:06 $
  * $State: Exp $
  */
 package com.sun.media.jai.codec;
@@ -125,6 +125,8 @@ public class TIFFEncodeParam implements ImageEncodeParam {
      * is supplied.
      *
      * @param compression    The compression type.
+     * @throws IllegalArgumentException if <code>compression</code> is
+     * not one of the defined <code>COMPRESSION_*</code> constants.
      */
     public void setCompression(int compression) {
 
@@ -139,7 +141,7 @@ public class TIFFEncodeParam implements ImageEncodeParam {
             // Do nothing.
             break;
         default:
-	    throw new Error(JaiI18N.getString("TIFFEncodeParam0"));
+	    throw new IllegalArgumentException(JaiI18N.getString("TIFFEncodeParam0"));
 	}
 
 	this.compression = compression;
@@ -310,11 +312,15 @@ public class TIFFEncodeParam implements ImageEncodeParam {
      * value in the range [1,9] where larger values indicate more compression.
      * The default setting is <code>Deflater.DEFAULT_COMPRESSION</code>.  This
      * setting is ignored if the compression type is not DEFLATE.
+     *
+     * @throws IllegalArgumentException if <code>deflateLevel</code> is
+     * not in the range <code>[1,&nbsp;9]</code> and is not
+     * {@link Deflater#DEFAULT_COMPRESSION}.
      */
     public void setDeflateLevel(int deflateLevel) {
         if(deflateLevel < 1 && deflateLevel > 9 &&
            deflateLevel != Deflater.DEFAULT_COMPRESSION) {
-	    throw new Error(JaiI18N.getString("TIFFEncodeParam1"));
+	    throw new IllegalArgumentException(JaiI18N.getString("TIFFEncodeParam1"));
         }
 
         this.deflateLevel = deflateLevel;
