@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:35 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-15 00:38:14 $
  * $State: Exp $
  */
 package javax.media.jai.operator;
@@ -15,6 +15,7 @@ import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
+import java.io.InputStream;
 import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.ParameterBlockJAI;
@@ -132,15 +133,23 @@ public class FileLoadDescriptor extends OperationDescriptorImpl {
 	if (checkFile.booleanValue()){
 	  String filename = (String)args.getObjectParameter(0);
 	  File f = new File(filename);
-	  if (!f.exists()) {
-            msg.append("\"" + filename + "\": " + 
-                       JaiI18N.getString("FileLoadDescriptor2"));
-            return false;
-	  }
-	  if (!f.canRead()) {
-            msg.append("\"" + filename + "\": " + 
+	  boolean fileExists = f.exists();
+	  if (!fileExists) {
+	      // Check if the file is accessible as an InputStream resource.
+	      // This would be the case if the application and the image file
+	      // are packaged in a JAR file
+	      InputStream is = getClass().getResourceAsStream(filename);
+	      if(is == null) {
+		  msg.append("\"" + filename + "\": " + 
+			     JaiI18N.getString("FileLoadDescriptor2"));
+		  return false;
+	      }
+	  } else { // file exists
+	      if (!f.canRead()) {
+		  msg.append("\"" + filename + "\": " + 
                        JaiI18N.getString("FileLoadDescriptor3"));
-            return false;
+		  return false;
+	      }
 	  }
 	}
         return true;

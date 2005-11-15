@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:26 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-15 00:38:15 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -83,7 +83,18 @@ public class FileLoadRIF implements RenderedImageFactory {
         try {
             // Create a SeekableStream from the file name (first parameter).
             String fileName = (String)args.getObjectParameter(0);
-            SeekableStream src = new FileSeekableStream(fileName);
+
+	    SeekableStream src = null;
+	    try {
+                src = new FileSeekableStream(fileName);
+            } catch (FileNotFoundException fnfe) {
+		// Try to get the file as an InputStream resource. This would
+		// happen when the application and image file are packaged in
+		// a JAR file
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream(fileName);
+		if (is != null)
+		    src = SeekableStream.wrapInputStream(is, true);
+            }
 
             ImageDecodeParam param = null;
             if (args.getNumParameters() > 1) {
