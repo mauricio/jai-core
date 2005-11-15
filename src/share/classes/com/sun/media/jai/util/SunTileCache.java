@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:02 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-15 01:50:59 $
  * $State: Exp $
  */
 package com.sun.media.jai.util;
@@ -255,6 +255,14 @@ public final class SunTileCache extends Observable
         } else {
             // create a new tile
             ct = new SunCachedTile(owner, tileX, tileY, tile, tileCacheMetric);
+
+            // Don't cache tile if adding it would provoke memoryControl()
+            // which would in turn only end up removing the tile.
+            if(memoryUsage + ct.memorySize > memoryCapacity &&
+               ct.memorySize > (long)(memoryCapacity * memoryThreshold)) {
+                return;
+            }
+
             ct.timeStamp = timeStamp++;
             ct.previous = null;
             ct.next = first;
@@ -601,6 +609,14 @@ public final class SunTileCache extends Observable
             } else {
                 // create a new tile
                 ct = new SunCachedTile(owner, tileX, tileY, tile, tileCacheMetric);
+
+                // Don't cache tile if adding it would provoke memoryControl()
+                // which would in turn only end up removing the tile.
+                if(memoryUsage + ct.memorySize > memoryCapacity &&
+                   ct.memorySize > (long)(memoryCapacity * memoryThreshold)) {
+                    return;
+                }
+
                 ct.timeStamp = timeStamp++;
                 ct.previous = null;
                 ct.next = first;
