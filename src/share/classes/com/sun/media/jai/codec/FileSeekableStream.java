@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:29 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-15 00:39:10 $
  * $State: Exp $
  */
 package com.sun.media.jai.codec;
@@ -18,7 +18,7 @@ import java.io.RandomAccessFile;
  * A subclass of <code>SeekableStream</code> that takes its input
  * from a <code>File</code> or <code>RandomAccessFile</code>.
  * Backwards seeking is supported.  The <code>mark()</code> and
- * <code>resest()</code> methods are supported.
+ * <code>reset()</code> methods are supported.
  *
  * <p><b> This class is not a committed part of the JAI API.  It may
  * be removed or changed in future releases of JAI.</b>
