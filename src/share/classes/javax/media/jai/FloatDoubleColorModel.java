@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:08 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-16 00:26:52 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -301,7 +301,7 @@ public class FloatDoubleColorModel extends ComponentColorModel {
             } else {
                 rgb = colorSpace.toRGB(fdata);
             }
-	    return (int)(rgb[sample]*255); 
+	    return (int)(rgb[sample]*255 + 0.5F); 
         } else {
             double[] ddata = (double[])inData;
             norm = new float[numColorComponents];
@@ -318,7 +318,7 @@ public class FloatDoubleColorModel extends ComponentColorModel {
                 }
                 rgb = colorSpace.toRGB(norm);
             }
-	    return (int)(rgb[sample]*255);
+	    return (int)(rgb[sample]*255 + 0.5);
         }
     }
 
@@ -437,10 +437,10 @@ public class FloatDoubleColorModel extends ComponentColorModel {
 
         if (transferType == DataBuffer.TYPE_FLOAT) {
             float[] fdata = (float[])inData;
-            return (int)(fdata[numColorComponents]*255.0F);
+            return (int)(fdata[numColorComponents]*255.0F + 0.5F);
         } else {
             double[] ddata = (double[])inData;
-            return (int)(ddata[numColorComponents]*255.0);
+            return (int)(ddata[numColorComponents]*255.0 + 0.5);
         }
     }
 
