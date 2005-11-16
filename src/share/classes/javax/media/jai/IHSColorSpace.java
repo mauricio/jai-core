@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:09 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-16 22:58:16 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -344,7 +344,7 @@ public final class IHSColorSpace extends ColorSpaceJAI {
 	    rgb[0] = rgb[1] = rgb[2] = i ;
 	}
 	else {
-            if (h >= PI23 && h < PI43) {
+            if (h >= PI23 && h <= PI43) {
             	float r = (1 - s) * i ;
             	float c1 = 3 * i - r ;
             	float c2 = (float) (SQRT3 * (r - i) * Math.tan(h)) ;
@@ -1176,7 +1176,7 @@ public final class IHSColorSpace extends ColorSpaceJAI {
 		    r = g = b = (float) I ;
 
 		    if (S != 0.0) {
-			if (h >= 85 && h < 170) {
+			if (h >= 85 && h <= 170) {
 			    r = (float) ((1 - S) * I) ;
 			    float c1 = (float) (3 * I - r) ;
 			    float c2 = (float) (SQRT3 * (r - I) * tanTable[h]) ;
@@ -1211,7 +1211,7 @@ public final class IHSColorSpace extends ColorSpaceJAI {
                     R = G = B = I ;
                     if (S != 0) {
 			double H =  h * normh ;
-                        if (H >= PI23 && H < PI43) {
+                        if (H >= PI23 && H <= PI43) {
                             R = (1 - S) * I ;
                             double c1 = 3 * I - R ;
                             double c2 = SQRT3 * (R - I) * Math.tan(H) ;
@@ -1296,7 +1296,7 @@ public final class IHSColorSpace extends ColorSpaceJAI {
 
                 R = G = B = I ;
                 if (S != 0.0) {
-                    if (H >= PI23 && H < PI43) {
+                    if (H >= PI23 && H <= PI43) {
                         R = (1 - S) * I ;
                         double c1 = 3 * I - R ;
                         double c2 = SQRT3 * (R - I) * Math.tan(H) ;
@@ -1374,7 +1374,7 @@ public final class IHSColorSpace extends ColorSpaceJAI {
 
                 R = G = B = I ;
                 if (S != 0) {
-                    if (H >= PI23 && H < PI43) {
+                    if (H >= PI23 && H <= PI43) {
                         R = (1 - S) * I ;
                         double c1 = 3 * I - R ;
                         double c2 = SQRT3 * (R - I) * Math.tan(H) ;
@@ -1446,7 +1446,7 @@ public final class IHSColorSpace extends ColorSpaceJAI {
 
                 R = G = B = I ;
                 if (S != 0) {
-                    if (H >= PI23 && H < PI43) {
+                    if (H >= PI23 && H <= PI43) {
                         R = (1 - S) * I ;
                         double c1 = 3 * I - R ;
                         double c2 = SQRT3 * (R - I) * Math.tan(H) ;
@@ -1519,7 +1519,7 @@ public final class IHSColorSpace extends ColorSpaceJAI {
 
                 R = G = B = I ;
                 if (S != 0) {
-                    if (H >= PI23 && H < PI43) {
+                    if (H >= PI23 && H <= PI43) {
                         R = (1 - S) * I ;
                         double c1 = 3 * I - R ;
                         double c2 = SQRT3 * (R - I) * Math.tan(H) ;
