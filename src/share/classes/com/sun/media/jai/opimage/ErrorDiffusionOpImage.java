@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:25 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-16 17:36:08 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -296,37 +296,66 @@ final class ErrorDiffusionOpImage extends UntiledOpImage {
             }
         }
 
+        // Determine whether a larger bit depth is needed.
+        int numColorMapBands = colorMap.getNumBands();
+        int maxIndex = 0;
+        for(int i = 0; i < numColorMapBands; i++) {
+            maxIndex = Math.max(colorMap.getOffset(i) +
+                                colorMap.getNumEntries() - 1,
+                                maxIndex);
+        }
+
+        // Create a deeper SampleModel if needed.
+        if((maxIndex > 255 && sm.getDataType() == DataBuffer.TYPE_BYTE) ||
+           (maxIndex > 65535 && sm.getDataType() != DataBuffer.TYPE_INT)) {
+            int dataType = maxIndex > 65535 ?
+                DataBuffer.TYPE_INT : DataBuffer.TYPE_USHORT;
+            sm =
+                RasterFactory.createComponentSampleModel(sm,
+                                                         dataType,
+                                                         sm.getWidth(),
+                                                         sm.getHeight(),
+                                                         1);
+	    il.setSampleModel(sm);
+
+            // Clear the ColorModel mask if needed.
+            ColorModel cm = il.getColorModel(null);
+            if(cm != null &&
+               !JDKWorkarounds.areCompatibleDataModels(sm, cm)) {
+                // Clear the mask bit if incompatible.
+                il.unsetValid(ImageLayout.COLOR_MODEL_MASK);
+            }
+        }
+
         // Set an IndexColorModel on the image if:
         // a. none is provided in the layout;
-        // b. source, destination, and colormap have byte data type;
-        // c. the colormap has 3 bands.
+        // b. source and colormap have byte data type;
+        // c. the colormap has 3 bands;
+        // d. destination has byte or ushort data type.
         if((layout == null || !il.isValid(ImageLayout.COLOR_MODEL_MASK)) &&
            source.getSampleModel().getDataType() == DataBuffer.TYPE_BYTE &&
-           sm.getDataType() == DataBuffer.TYPE_BYTE &&
+           (sm.getDataType() == DataBuffer.TYPE_BYTE ||
+            sm.getDataType() == DataBuffer.TYPE_USHORT) &&
            colorMap.getDataType() == DataBuffer.TYPE_BYTE &&
            colorMap.getNumBands() == 3) {
             ColorModel cm = source.getColorModel();
             if(cm == null ||
                (cm != null && cm.getColorSpace().isCS_sRGB())) {
                 int size = colorMap.getNumEntries();
-                byte[][] cmap = new byte[3][256];
+                byte[][] cmap = new byte[3][maxIndex+1];
                 for(int i = 0; i < 3; i++) {
                     byte[] band = cmap[i];
                     byte[] data = colorMap.getByteData(i);
                     int offset = colorMap.getOffset(i);
                     int end = offset + size;
-                    for(int j = 0; j < offset; j++) {
-                        band[j] = (byte)0;
-                    }
                     for(int j = offset; j < end; j++) {
                         band[j] = data[j - offset];
                     }
-                    for(int j = end; j < 256; j++) {
-                        band[j] = (byte)0xFF;
-                    }
                 }
 
-                il.setColorModel(new IndexColorModel(8, 256,
+                int numBits =
+                    sm.getDataType() == DataBuffer.TYPE_BYTE ? 8 : 16;
+                il.setColorModel(new IndexColorModel(numBits, maxIndex + 1,
                                                      cmap[0], cmap[1],
                                                      cmap[2]));
             }
