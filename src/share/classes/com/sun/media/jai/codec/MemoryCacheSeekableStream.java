@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:31 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-17 00:47:30 $
  * $State: Exp $
  */
 package com.sun.media.jai.codec;
@@ -241,7 +241,8 @@ public final class MemoryCacheSeekableStream extends SeekableStream {
         }
 
         byte[] buf = (byte[])data.elementAt((int)(pointer >> SECTOR_SHIFT));
-        int nbytes = Math.min(len, SECTOR_SIZE - (int)(pointer & SECTOR_MASK));
+        int nbytes = Math.min((int)(pos < pointer + len ? pos - pointer : len),
+                              SECTOR_SIZE - (int)(pointer & SECTOR_MASK));
         System.arraycopy(buf, (int)(pointer & SECTOR_MASK),
                          b, off, nbytes);
         pointer += nbytes;
