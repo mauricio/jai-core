@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.3 $
- * $Date: 2005-10-21 00:18:01 $
+ * $Revision: 1.4 $
+ * $Date: 2005-11-17 01:33:23 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -945,10 +945,19 @@ public class TIFFImage extends SimpleRenderedImage {
      * Returns tile (tileX, tileY) as a Raster.
      */
     public synchronized Raster getTile(int tileX, int tileY) {
+        // Check parameters.
         if ((tileX < 0) || (tileX >= tilesX) ||
             (tileY < 0) || (tileY >= tilesY)) {
             throw new IllegalArgumentException(JaiI18N.getString("TIFFImage12"));
         }
+
+        // The tile to return.
+        WritableRaster tile = null;
+
+        // Synchronize the rest of the method in case other TIFFImage
+        // instances using the same stream were created by the same
+        // TIFFImageDecoder. This fixes 4690773.
+        synchronized(this.stream) {
 
 	// Get the data array out of the DataBuffer
 	byte bdata[] = null;
@@ -988,7 +997,7 @@ public class TIFFImage extends SimpleRenderedImage {
             }
 	}
 
-        WritableRaster tile =
+        tile =
 	    (WritableRaster)RasterFactory.createWritableRaster(sampleModel,
                                                    buffer,
                                                    new Point(tileXToX(tileX),
@@ -1791,6 +1800,8 @@ public class TIFFImage extends SimpleRenderedImage {
                 break;
             }
         }
+
+        } // synchronized(this.stream)
 
         return tile;
     }
