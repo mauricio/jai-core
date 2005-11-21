@@ -5,13 +5,14 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:41 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-21 22:49:40 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.DataBuffer;
 import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.RenderedImage;
@@ -31,8 +32,10 @@ import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
 import javax.media.jai.InterpolationTable;
 import javax.media.jai.JAI;
+import javax.media.jai.OpImage;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedOp;
+import com.sun.media.jai.opimage.PointMapperOpImage;
 import java.util.Map;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
@@ -86,6 +89,12 @@ public class RotateCRIF extends CRIFImpl {
         //
         double tmp_angle = (180.0/Math.PI)*angle;
         double rnd_angle = Math.round(tmp_angle);
+
+        //
+        // Represent the angle as an AffineTransform
+        //
+        AffineTransform transform =
+            AffineTransform.getRotateInstance(angle, x_center, y_center);
 
         // Check if angle is (nearly) integral
         if (Math.abs(rnd_angle - tmp_angle) < 0.0001) {
@@ -151,10 +160,18 @@ public class RotateCRIF extends CRIFImpl {
 		// TranslateIntOpImage can't deal with ImageLayout hint
 		if (layout == null) {
 		    // Translate image and return it
-		    return new TranslateIntOpImage(trans,
-						   renderHints,
-						   rotMinX - imMinX,
-						   rotMinY - imMinY);
+                    OpImage intermediateImage =
+                        new TranslateIntOpImage(trans,
+                                                renderHints,
+                                                rotMinX - imMinX,
+                                                rotMinY - imMinY);
+                    try {
+                        return new PointMapperOpImage(intermediateImage,
+                                                      renderHints,
+                                                      transform);
+                    } catch(NoninvertibleTransformException nite) {
+                        return intermediateImage;
+                    }
 		} else {
 		    ParameterBlock pbScale = new ParameterBlock();
 		    pbScale.addSource(trans);
@@ -163,7 +180,16 @@ public class RotateCRIF extends CRIFImpl {
 		    pbScale.add(rotMinX - imMinX);
 		    pbScale.add(rotMinY - imMinY);
 		    pbScale.add(interp);
-		    return JAI.create("scale", pbScale, renderHints);
+                    PlanarImage intermediateImage =
+                        JAI.create("scale", pbScale,
+                                   renderHints).getRendering();
+                    try {
+                        return new PointMapperOpImage(intermediateImage,
+                                                      renderHints,
+                                                      transform);
+                    } catch(NoninvertibleTransformException nite) {
+                        return intermediateImage;
+                    }
 		}
             }
         }
@@ -172,12 +198,6 @@ public class RotateCRIF extends CRIFImpl {
         // At this point we know that we cannot call other operations.
         // Have to do Affine.
         //
-
-        //
-        // Represent the angle as an AffineTransform
-        //
-        AffineTransform transform =
-            AffineTransform.getRotateInstance(angle, x_center, y_center);
 
         //
         // Do the Affine operation

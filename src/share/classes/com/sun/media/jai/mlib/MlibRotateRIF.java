@@ -5,13 +5,14 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:04 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-21 22:49:40 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.awt.image.renderable.RenderedImageFactory;
@@ -25,9 +26,12 @@ import javax.media.jai.InterpolationNearest;
 import javax.media.jai.InterpolationTable;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
+import javax.media.jai.OpImage;
+import javax.media.jai.PlanarImage;
 import java.util.Map;
 import javax.media.jai.BorderExtender;
 import com.sun.media.jai.opimage.RIFUtil;
+import com.sun.media.jai.opimage.PointMapperOpImage;
 import com.sun.media.jai.opimage.TranslateIntOpImage;
 
 /**
@@ -81,6 +85,10 @@ public class MlibRotateRIF implements RenderedImageFactory {
          */
         double tmp_angle = 180.0F * angle / Math.PI;
         double rnd_angle = Math.round(tmp_angle);
+
+        /* Represent the angle as an AffineTransform. */
+        AffineTransform transform =
+            AffineTransform.getRotateInstance(angle, x_center, y_center);
 
         // Check if angle is (nearly) integral
         if (Math.abs(rnd_angle - tmp_angle) < 0.0001) {
@@ -141,10 +149,18 @@ public class MlibRotateRIF implements RenderedImageFactory {
                 // Translate image and return it
 		// TranslateIntOpImage can't deal with ImageLayout hint
 		if (layout == null) {
-		    return new TranslateIntOpImage(trans,
-						   hints,
-						   rotMinX - imMinX,
-						   rotMinY - imMinY);
+		    OpImage intermediateImage =
+                        new TranslateIntOpImage(trans,
+                                                hints,
+                                                rotMinX - imMinX,
+                                                rotMinY - imMinY);
+                    try {
+                        return new PointMapperOpImage(intermediateImage,
+                                                      hints,
+                                                      transform);
+                    } catch(NoninvertibleTransformException nite) {
+                        return intermediateImage;
+                    }
 		} else {
 		    ParameterBlock pbScale = new ParameterBlock();
 		    pbScale.addSource(trans);
@@ -153,7 +169,15 @@ public class MlibRotateRIF implements RenderedImageFactory {
 		    pbScale.add(rotMinX - imMinX);
 		    pbScale.add(rotMinY - imMinY);
 		    pbScale.add(interp);
-		    return JAI.create("scale", pbScale, hints);
+		    PlanarImage intermediateImage =
+                        JAI.create("scale", pbScale, hints).getRendering();
+                    try {
+                        return new PointMapperOpImage(intermediateImage,
+                                                      hints,
+                                                      transform);
+                    } catch(NoninvertibleTransformException nite) {
+                        return intermediateImage;
+                    }
 		}
             }
         }
@@ -162,10 +186,6 @@ public class MlibRotateRIF implements RenderedImageFactory {
          * At this point we know that we cannot call other operations.
          * Have to do Affine.
          */
-
-        /* Represent the angle as an AffineTransform. */
-        AffineTransform transform =
-            AffineTransform.getRotateInstance(angle, x_center, y_center);
 
         /* Do the Affine operation. */
         if (interp instanceof InterpolationNearest) {
