@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-05-12 18:24:33 $
+ * $Revision: 1.3 $
+ * $Date: 2005-11-23 22:53:09 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -34,6 +34,7 @@ import javax.media.jai.remote.NegotiableCapabilitySet;
 import javax.media.jai.tilecodec.TileCodecParameterList;
 import javax.media.jai.util.ImagingListener;
 import com.sun.media.jai.util.ImagingListenerImpl;
+import com.sun.media.jai.util.PropertyUtil;
 
 /**
  * A convenience class for instantiating operations.
@@ -592,6 +593,8 @@ public final class JAI {
     public static final String getBuildVersion() {
 	try {
 	    InputStream is = JAI.class.getResourceAsStream("buildVersion");
+	    if (is == null) 
+		is = PropertyUtil.getFileFromClasspath("javax/media/jai/buildVersion");
 
 	    BufferedReader reader =
 		new BufferedReader(new InputStreamReader(is));
