@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:47 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-23 21:08:28 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -33,7 +33,9 @@ import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import javax.media.jai.ImageLayout;
+import javax.media.jai.JAI;
 import javax.media.jai.RasterAccessor;
+import javax.media.jai.util.ImagingListener;
 import com.sun.media.jai.util.DataBufferUtils;
 import com.sun.media.jai.util.ImageUtil;
 import com.sun.media.jai.util.PropertyUtil;
@@ -248,24 +250,44 @@ public class MediaLibAccessor {
                 });
             useMlibVar = result.booleanValue();
             if (!useMlibVar) {
-                System.err.println(JaiI18N.getString("MediaLibAccessor2"));
+                forwardToListener(JaiI18N.getString("MediaLibAccessor2"),
+                                  new MediaLibLoadException());
             }
         } catch (NoClassDefFoundError ncdfe) {
             // If mediaLib jar file is not found, fall back to Java code.
             useMlibVar = false;
-            System.err.println(JaiI18N.getString("MediaLibAccessor3"));
+            forwardToListener(JaiI18N.getString("MediaLibAccessor3"), ncdfe);
         } catch (ClassFormatError cfe) {
             // If mediaLib jar file is not found, fall back to Java code.
             useMlibVar = false;
-            System.err.println(JaiI18N.getString("MediaLibAccessor3"));
+            forwardToListener(JaiI18N.getString("MediaLibAccessor3"), cfe);
         } catch (SecurityException se) {
             // If mediaLib jar file is not found, fall back to Java code.
             useMlibVar = false;
-            System.err.println(JaiI18N.getString("MediaLibAccessor4"));
+            forwardToListener(JaiI18N.getString("MediaLibAccessor4"), se);
         }
 
 	if (useMlibVar == false)
 	    return;
+    }
+
+    /**
+     * Forwards the supplied message and exception to the
+     * <code>ImagingListener</code> set on the default JAI instance.
+     * If none is set (which should not happen) the message is simply
+     * printed to <code>System.err</code>.
+     */
+    private static void forwardToListener(String message,
+                                          Throwable thrown) {
+        ImagingListener listener =
+            JAI.getDefaultInstance().getImagingListener();
+
+        if(listener != null) {
+            listener.errorOccurred(message, thrown, MediaLibAccessor.class,
+                                   false);
+        } else {
+            System.err.println(message);
+        }
     }
 
     /**
@@ -1565,3 +1587,13 @@ public class MediaLibAccessor {
     }
 }
 
+class MediaLibLoadException extends Exception {
+    MediaLibLoadException() {
+        super();
+    }
+
+    public synchronized Throwable
+        fillInStackTrace() {
+        return this;
+    }
+}
