@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:57 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-23 22:25:07 $
  * $State: Exp $
  */package com.sun.media.jai.mlib;
 
@@ -73,6 +73,40 @@ public class MlibHistogramRIF implements RenderedImageFactory {
         double[] lowValueFP = (double[])args.getObjectParameter(4);
         double[] highValueFP = (double[])args.getObjectParameter(5);
 
+        // Return null if lowValueFP or highValueFP is out of dataType range.
+        int minPixelValue;
+        int maxPixelValue;
+        switch (dataType) {
+        case DataBuffer.TYPE_SHORT:
+            minPixelValue = Short.MIN_VALUE;
+            maxPixelValue = Short.MAX_VALUE;
+            break;
+        case DataBuffer.TYPE_USHORT:
+            minPixelValue = 0;
+            maxPixelValue = -((int)Short.MIN_VALUE) + Short.MAX_VALUE;
+            break;
+        case DataBuffer.TYPE_INT:
+            minPixelValue = Integer.MIN_VALUE;
+            maxPixelValue = Integer.MAX_VALUE;
+            break;
+        case DataBuffer.TYPE_BYTE:
+        default:
+            minPixelValue = 0;
+            maxPixelValue = -((int)Byte.MIN_VALUE) + Byte.MAX_VALUE;
+            break;
+        }
+        for (int i = 0; i < lowValueFP.length; i++) {
+            if (lowValueFP[i] < minPixelValue ||
+                lowValueFP[i] > maxPixelValue) {
+                return null;
+            }
+        }
+        for (int i = 0; i < highValueFP.length; i++) {
+            if (highValueFP[i] <= minPixelValue ||
+                highValueFP[i] > (maxPixelValue + 1)) {
+                return null;
+            }
+        }
 
         MlibHistogramOpImage op = null;
         try {
