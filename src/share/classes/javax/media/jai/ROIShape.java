@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:18 $
+ * $Revision: 1.2 $
+ * $Date: 2005-11-24 00:04:04 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -540,7 +540,7 @@ public class ROIShape extends ROI {
 
                 // Process until end of left or right edge.
                 while (y < intYLeft && y < intYRight) {
-                    if (y >= clip.y && y <= clip.getMaxY()) {
+                    if (y >= clip.y && y < clip.getMaxY()) {
                         Rectangle rect;
                         if (leftX[0] <= rightX[0]) {
                             rect = scanSegment(y, leftX[0], rightX[0]);
