@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-11-15 00:38:14 $
+ * $Revision: 1.3 $
+ * $Date: 2005-11-29 00:08:56 $
  * $State: Exp $
  */
 package javax.media.jai.operator;
@@ -138,7 +138,7 @@ public class FileLoadDescriptor extends OperationDescriptorImpl {
 	      // Check if the file is accessible as an InputStream resource.
 	      // This would be the case if the application and the image file
 	      // are packaged in a JAR file
-	      InputStream is = getClass().getResourceAsStream(filename);
+	      InputStream is = this.getClass().getClassLoader().getResourceAsStream(filename);
 	      if(is == null) {
 		  msg.append("\"" + filename + "\": " + 
 			     JaiI18N.getString("FileLoadDescriptor2"));
