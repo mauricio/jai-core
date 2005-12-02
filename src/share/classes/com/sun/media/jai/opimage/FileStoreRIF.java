@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:26 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-02 01:51:26 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -63,9 +63,13 @@ public class FileStoreRIF implements RenderedImageFactory {
         /*
          * Close the stream.
          */
-        protected void finalize() throws Throwable {
-            stream.close();
-            super.finalize();
+        public void dispose() {
+            try {
+                stream.close();
+            } catch(IOException e) {
+                // Ignore it ...
+            }
+            super.dispose();
         }
     }
 
