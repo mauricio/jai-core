@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.4 $
- * $Date: 2005-11-17 01:33:23 $
+ * $Revision: 1.5 $
+ * $Date: 2005-12-07 00:23:12 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -55,6 +55,7 @@ import com.sun.image.codec.jpeg.JPEGDecodeParam;
 import com.sun.image.codec.jpeg.JPEGImageDecoder;
 import com.sun.media.jai.codecimpl.ImagingListenerProxy;
 import com.sun.media.jai.codecimpl.util.ImagingException;
+import com.sun.media.jai.util.SimpleCMYKColorSpace;
 
 public class TIFFImage extends SimpleRenderedImage {
 
@@ -80,6 +81,7 @@ public class TIFFImage extends SimpleRenderedImage {
     private static final int TYPE_RGB_ALPHA    = 6;
     private static final int TYPE_YCBCR_SUB    = 7;
     private static final int TYPE_GENERIC      = 8;
+    private static final int TYPE_CMYK         = 9;
 
     // Incidental tags
     private static final int TIFF_JPEG_TABLES       = 347;
@@ -482,6 +484,10 @@ public class TIFFImage extends SimpleRenderedImage {
                 imageType = TYPE_BILEVEL;
             }
             break;
+	case 5: // Separated image, usually CMYK
+	    if (sampleSize == 8 && samplesPerPixel == 4) {
+		imageType = TYPE_CMYK;
+	    }
         case 6: // YCbCr
             if(compression == COMP_JPEG_TTN2 &&
                sampleSize == 8 && samplesPerPixel == 3) {
@@ -506,7 +512,7 @@ public class TIFFImage extends SimpleRenderedImage {
                 }
             }
             break;
-        default: // Other including CMYK, CIE L*a*b*, unknown.
+        default: // Other including CIE L*a*b*, unknown.
             if(sampleSize % 8 == 0) {
                 imageType = TYPE_GENERIC;
             }
@@ -766,6 +772,7 @@ public class TIFFImage extends SimpleRenderedImage {
         case TYPE_GRAY_ALPHA:
         case TYPE_RGB:
         case TYPE_RGB_ALPHA:
+	case TYPE_CMYK:
             // Create a pixel interleaved SampleModel with decreasing
             // band offsets.
             int[] RGBOffsets = new int[numBands];
@@ -788,7 +795,11 @@ public class TIFFImage extends SimpleRenderedImage {
             if(imageType == TYPE_GRAY || imageType == TYPE_RGB) {
                 colorModel =
                     ImageCodec.createComponentColorModel(sampleModel);
-            } else { // hasAlpha
+            } else if (imageType == TYPE_CMYK) {
+		
+		colorModel = ImageCodec.createComponentColorModel(sampleModel,
+								  new SimpleCMYKColorSpace());
+	    } else { // hasAlpha
                 // Transparency.OPAQUE signifies image data that is
                 // completely opaque, meaning that all pixels have an alpha
                 // value of 1.0. So the extra band gets ignored, which is
