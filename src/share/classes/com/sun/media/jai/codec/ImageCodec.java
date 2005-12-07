@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-05-12 18:24:29 $
+ * $Revision: 1.3 $
+ * $Date: 2005-12-07 00:25:26 $
  * $State: Exp $
  */
 package com.sun.media.jai.codec;
@@ -36,6 +36,7 @@ import com.sun.media.jai.codecimpl.TIFFCodec;
 import com.sun.media.jai.codecimpl.WBMPCodec;
 import com.sun.media.jai.codecimpl.ImagingListenerProxy;
 import com.sun.media.jai.codecimpl.util.FloatDoubleColorModel;
+import com.sun.media.jai.util.SimpleCMYKColorSpace;
 
 /**
  * An abstract class allowing the creation of image decoders and
@@ -731,6 +732,8 @@ public abstract class ImageCodec {
 	int[] bits = null;
         int transferType = -1;
         boolean hasAlpha = (bands % 2 == 0);
+	if (cp instanceof SimpleCMYKColorSpace)
+	    hasAlpha = false;
         int transparency = hasAlpha ? Transparency.TRANSLUCENT
                                         : Transparency.OPAQUE;
         if (type == DataBuffer.TYPE_BYTE) {
