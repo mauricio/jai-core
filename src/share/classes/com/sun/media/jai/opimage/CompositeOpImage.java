@@ -5,12 +5,14 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:18 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-08 00:58:33 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
 import java.awt.Rectangle;
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -119,8 +121,15 @@ final class CompositeOpImage extends PointOpImage {
         this.alphaPremultiplied = alphaPremultiplied;
 
         SampleModel sm = source1.getSampleModel();
+        ColorModel cm = source1.getColorModel();
         int dtype = sm.getTransferType();
-        int bands = sm.getNumBands() + 1;	// one additional alpha channel
+        int bands;
+        if (cm instanceof IndexColorModel) {
+            bands = cm.getNumComponents();
+        } else {
+            bands = sm.getNumBands();
+        }
+        bands += 1;                             // one additional alpha channel
 
         if (sampleModel.getTransferType() != dtype ||
             sampleModel.getNumBands() != bands) {
