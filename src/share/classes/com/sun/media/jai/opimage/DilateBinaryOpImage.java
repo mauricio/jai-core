@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:22 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-08 20:27:58 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -327,7 +327,7 @@ final class DilateBinaryOpImage extends AreaOpImage {
 	  int m = j;
 	  int lastCol = kwPack - 1;
 	  bitShiftMatrixLeft(kerPacked, kh, kwPack);
-	  for (int i=0; i< kh; i++, lastCol+=kwPack, m+= kh){
+	  for (int i=0; i< kh; i++, lastCol+=kwPack, m+= kw){
 	    if (kdata[m] > .9F){     	  // same as == 1.0F
 	       kerPacked[lastCol] |= 0x1;
 	    }
