@@ -5,12 +5,13 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:55 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-09 00:20:28 $
  * $State: Exp $
  */ 
 package com.sun.media.jai.mlib;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.DataBuffer;
 import java.awt.image.SampleModel;
 import java.awt.image.Raster;
@@ -21,6 +22,7 @@ import java.awt.image.renderable.RenderedImageFactory;
 import javax.media.jai.AreaOpImage;
 import javax.media.jai.BorderExtender;
 import javax.media.jai.ImageLayout;
+import javax.media.jai.JAI;
 import javax.media.jai.KernelJAI;
 import javax.media.jai.OpImage;
 import java.util.Map;
@@ -37,6 +39,34 @@ import com.sun.medialib.mlib.*;
  * @see KernelJAI
  */
 final class MlibErode3PlusOpImage extends AreaOpImage {
+
+    // Since medialib expects single banded data with IndexColorModel, we
+    // should not expand the indexed data
+    private static Map configHelper(Map configuration) {
+
+        Map config;
+
+        if (configuration == null) {
+
+            config = new RenderingHints(JAI.KEY_REPLACE_INDEX_COLOR_MODEL,
+                                        Boolean.FALSE);
+
+        } else {
+
+            config = configuration;
+
+	    // If the user has specified a hint for this, then we don't
+	    // want to change it, so change only if this hint is not 
+	    // already specified
+            if (!(config.containsKey(JAI.KEY_REPLACE_INDEX_COLOR_MODEL))) {
+                RenderingHints hints = (RenderingHints)configuration;
+                config = (RenderingHints)hints.clone();
+                config.put(JAI.KEY_REPLACE_INDEX_COLOR_MODEL, Boolean.FALSE);
+            }
+        }
+
+        return config;
+    }
 
     /**
      * Creates a MlibErode3PlusOpImage given the image source
@@ -59,14 +89,14 @@ final class MlibErode3PlusOpImage extends AreaOpImage {
                                   ) {
 	super(source,
               layout,
-              config,
+              configHelper(config),
               true,
               extender,
               1, //kernel.getLeftPadding(),
               1, //kernel.getRightPadding(),
               1, //kernel.getTopPadding(),
               1  //kernel.getBottomPadding()
-	      );
+	      );	
     }
 
 
