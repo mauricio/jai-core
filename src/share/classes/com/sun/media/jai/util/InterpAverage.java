@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:00 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-09 01:42:36 $
  * $State: Exp $
  */package com.sun.media.jai.util;
 
@@ -22,8 +22,11 @@ import javax.media.jai.Interpolation;
 public class InterpAverage extends Interpolation {
     /**
      * Creates an <code>InterpAverage</code> instance having the supplied
-     * dimensions.  The <code>subsampleBitsH</code> and
-     * <code>subsampleBitsV</code> instance variables are set to 32.
+     * dimensions.  The left and top padding are
+     * <code>(blockX&nbsp;-&nbsp;1)/2</code> and
+     * <code>(blockY&nbsp;-&nbsp;1)/2</code>, respectively. The
+     * <code>subsampleBitsH</code> and <code>subsampleBitsV</code> instance
+     * variables are set to 32.
      *
      * @param blockX The width of the interpolation block.
      * @param blockY The height of the interpolation block.
@@ -32,7 +35,8 @@ public class InterpAverage extends Interpolation {
      */
     public InterpAverage(int blockX, int blockY) {
         super(blockX, blockY,
-              0, blockX - 1, 0, blockY - 1,
+              (blockX - 1)/2, blockX - 1 - (blockX - 1)/2,
+              (blockY - 1)/2, blockY - 1 - (blockY - 1)/2,
               32, 32);
 
         if(blockX <= 0 || blockY <= 0) {
