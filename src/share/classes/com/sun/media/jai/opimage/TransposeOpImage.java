@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:46 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-13 21:23:06 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -36,7 +36,7 @@ import java.util.Map;
  * @since EA2
  *
  */
-class TransposeOpImage extends GeometricOpImage {
+public class TransposeOpImage extends GeometricOpImage {
 
     /** The Transpose type */
     protected int type;

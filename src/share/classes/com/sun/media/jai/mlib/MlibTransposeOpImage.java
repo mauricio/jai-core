@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:08 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-13 21:23:07 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -24,6 +24,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import java.util.Map;
 import javax.media.jai.RasterAccessor;
+import com.sun.media.jai.opimage.TransposeOpImage;
 import com.sun.medialib.mlib.*;
 // import com.sun.media.jai.test.OpImageTester;
 
@@ -33,102 +34,7 @@ import com.sun.medialib.mlib.*;
  * @since EA3
  *
  */
-final class MlibTransposeOpImage extends GeometricOpImage {
-
-    /** The Transpose type */
-    protected int type;
-
-    /**
-     * Store source width & height
-     */
-    protected int src_width, src_height;
-
-    protected Rectangle sourceBounds;
-
-    private static ImageLayout layoutHelper(ImageLayout layout,
-                                            RenderedImage source,
-                                            int type) {
-        ImageLayout newLayout;
-        if (layout != null) {
-            newLayout = (ImageLayout)layout.clone();
-        } else {
-            newLayout = new ImageLayout();
-        }
-
-        //
-        // Forward map the source to get the destination (newLayout) area
-        //
-        int x1 = source.getMinX();
-        int y1 = source.getMinY();
-        int s_width = source.getWidth();
-        int s_height = source.getHeight();
-        int x2 = x1 + s_width - 1;
-        int y2 = y1 + s_height - 1;
-
-        // Layout coordinates
-        int dx1 = 0;
-        int dy1 = 0;
-        int dx2 = 0;
-        int dy2 = 0;
-
-        switch (type) {
-        case 0: // FLIP_VERTICAL
-            dx1 = x1;
-            dy1 = s_height - y2 - 1;
-            dx2 = x2;
-            dy2 = s_height - y1 - 1;
-            break;
-
-        case 1: // FLIP_HORIZONTAL
-            dx1 = s_width - x2 - 1;
-            dy1 = y1;
-            dx2 = s_width - x1 - 1;
-            dy2 = y2;
-            break;
-
-        case 2: // FLIP_DIAGONAL
-            dx1 = y1;
-            dy1 = x1;
-            dx2 = y2;
-            dy2 = x2;
-            break;
-
-        case 3: // FLIP_ANTIDIAGONAL
-            dx1 = s_height - y2 - 1;
-            dy1 = s_width - x2 - 1;
-            dx2 = s_height - y1 - 1;
-            dy2 = s_width - x1 - 1;
-            break;
-
-        case 4: // ROTATE_90
-            dx1 = s_height - y2 - 1;
-            dy1 = x1;
-            dx2 = s_height - y1 - 1;
-            dy2 = x2;
-            break;
-
-        case 5: // ROTATE_180
-            dx1 = s_width - x2 - 1;
-            dy1 = s_height - y2 - 1;
-            dx2 = s_width - x1 - 1;
-            dy2 = s_height - y1 - 1;
-            break;
-
-        case 6: // ROTATE_270
-            dx1 = y1;
-            dy1 = s_width - x2 - 1;
-            dx2 = y2;
-            dy2 = s_width - x1 - 1;
-            break;
-        }
-
-        newLayout.setMinX(dx1);
-        newLayout.setMinY(dy1);
-        newLayout.setWidth(dx2 - dx1 + 1);
-        newLayout.setHeight(dy2 - dy1 + 1);
-
-        return newLayout;
-    }
+final class MlibTransposeOpImage extends TransposeOpImage {
 
     /**
      * Constructs an TransposeOpImage from a RenderedImage source,
@@ -149,237 +55,7 @@ final class MlibTransposeOpImage extends GeometricOpImage {
                                 Map config,
                                 ImageLayout layout,
                                 int type) {
-        super(vectorize(source),
-              layoutHelper(layout,
-                           source,
-                           type),
-              config,
-              true,
-              null,  // BorderExtender
-              null,
-              null); // Interpolation (superclass defaults to nearest neighbor)
-
-        // store the Transpose type
-        this.type = type;
-
-        // Store the source width & height
-        src_width = source.getWidth();
-        src_height = source.getHeight();
-
-        this.sourceBounds = new Rectangle(source.getMinX(),
-                                          source.getMinY(),
-                                          source.getWidth(),
-                                          source.getHeight());
-    }
-
-    /**
-     * Forward map the source Rectangle.
-     */
-    protected Rectangle forwardMapRect(Rectangle sourceRect,
-                                       int sourceIndex) {
-        return mapRect(sourceRect, sourceBounds, type, true);
-    }
-
-    /**
-     * Backward map the destination Rectangle.
-     */
-    protected Rectangle backwardMapRect(Rectangle destRect,
-                                        int sourceIndex) {
-        //
-        // Backward map the destination to get the source Rectangle
-        //
-        int x1 = destRect.x;
-        int y1 = destRect.y;
-        int x2 = x1 + destRect.width - 1;
-        int y2 = y1 + destRect.height - 1;
-
-        int sx1 = 0;
-        int sy1 = 0;
-        int sx2 = 0;
-        int sy2 = 0;
-
-        switch (type) {
-        case 0: // FLIP_VERTICAL
-            sx1 = x1;
-            sy1 = src_height - y2 - 1;
-            sx2 = x2;
-            sy2 = src_height - y1 - 1;
-            break;
-
-        case 1: // FLIP_HORIZONTAL
-            sx1 = src_width - x2 - 1;
-            sy1 = y1;
-            sx2 = src_width - x1 - 1;
-            sy2 = y2;
-            break;
-
-        case 2: // FLIP_DIAGONAL
-            sx1 = y1;
-            sy1 = x1;
-            sx2 = y2;
-            sy2 = x2;
-            break;
-
-        case 3: // FLIP_ANTIDIAGONAL
-            sx1 = src_width - y2 - 1;
-            sy1 = src_height - x2 - 1;
-            sx2 = src_width - y1 - 1;
-            sy2 = src_height - x1 - 1;
-            break;
-
-        case 4: // ROTATE_90
-            sx1 = y1;
-            sy1 = src_height - x2 - 1;
-            sx2 = y2;
-            sy2 = src_height - x1 - 1;
-            break;
-
-        case 5: // ROTATE_180
-            sx1 = src_width - x2 - 1;
-            sy1 = src_height - y2 - 1;
-            sx2 = src_width - x1 - 1;
-            sy2 = src_height - y1 - 1;
-            break;
-
-        case 6: // ROTATE_270
-            sx1 = src_width - y2 - 1;
-            sy1 = x1;
-            sx2 = src_width - y1 - 1;
-            sy2 = x2;
-            break;
-        }
-
-        return new Rectangle(sx1,
-                             sy1,
-                             (sx2 - sx1 + 1),
-                             (sy2 - sy1 + 1));
-    }
-
-    /**
-     * Map a point according to the transposition type.
-     * If <code>mapForwards</code> is <code>true</code>,
-     * the point is considered to lie in the source image and
-     * is mapping into the destination space.  Otherwise,
-     * the point lies in the destination and is mapped
-     * into the source space.
-     *
-     * <p> In either case, the bounds of the source image
-     * must be supplied.  The bounds are given by the indices
-     * of the upper left and lower right pixels, i.e.,
-     * maxX = minX + width - 1 and similarly for maxY.
-     */
-    // COPIED WHOLESALE FROM com.sun.media.jai.opimage.TransposeOpImage.
-    protected static void mapPoint(int[] pt,
-                                   int minX, int minY,
-                                   int maxX, int maxY,
-                                   int type,
-                                   boolean mapForwards) {
-        int sx = pt[0];
-        int sy = pt[1];
-        int dx = -1;
-        int dy = -1;
-
-        switch (type) {
-        case 0: // FLIP_VERTICAL
-            dx = sx;
-            dy = minY + maxY - sy;
-            break;
-
-        case 1: // FLIP_HORIZONTAL
-            dx = minX + maxX - sx;
-            dy = sy;
-            break;
-
-        case 2: // FLIP_DIAGONAL
-            dx = minX - minY + sy;
-            dy = minY - minX + sx;
-            break;
-
-        case 3: // FLIP_ANTIDIAGONAL
-            if (mapForwards) {
-                dx = minX + maxY - sy;
-                dy = minY + maxX - sx;
-            } else {
-                dx = minY + maxX - sy;
-                dy = minX + maxY - sx;
-            }
-            break;
-
-        case 4: // ROTATE_90
-            if (mapForwards) {
-                dx = minX + maxY - sy;
-                dy = minY - minX + sx;
-            } else {
-                dx = minX - minY + sy;
-                dy = minX + maxY - sx;
-            }
-            break;
-
-        case 5: // ROTATE_180
-            dx = minX + maxX - sx;
-            dy = minY + maxY - sy;
-            break;
-
-        case 6: // ROTATE_270
-            if (mapForwards) {
-                dx = minX - minY + sy;
-                dy = maxX + minY - sx;
-            } else {
-                dx = maxX + minY - sy;
-                dy = minY - minX + sx;
-            }
-            break;
-        }
-
-        pt[0] = dx;
-        pt[1] = dy;
-    }
-
-    // COPIED WHOLESALE FROM com.sun.media.jai.opimage.TransposeOpImage.
-    private static Rectangle mapRect(Rectangle rect,
-                                     Rectangle sourceBounds,
-                                     int type,
-                                     boolean mapForwards) {
-        int sMinX = sourceBounds.x;
-        int sMinY = sourceBounds.y;
-        int sMaxX = sMinX + sourceBounds.width - 1;
-        int sMaxY = sMinY + sourceBounds.height - 1;
-        int dMinX, dMinY, dMaxX, dMaxY;
-
-        int[] pt = new int[2];
-        pt[0] = rect.x;
-        pt[1] = rect.y;
-        mapPoint(pt, sMinX, sMinY, sMaxX, sMaxY, type, mapForwards);
-        dMinX = dMaxX = pt[0];
-        dMinY = dMaxY = pt[1];
-
-        pt[0] = rect.x + rect.width - 1;
-        pt[1] = rect.y;
-        mapPoint(pt, sMinX, sMinY, sMaxX, sMaxY, type, mapForwards);
-        dMinX = Math.min(dMinX, pt[0]);
-        dMinY = Math.min(dMinY, pt[1]);
-        dMaxX = Math.max(dMaxX, pt[0]);
-        dMaxY = Math.max(dMaxY, pt[1]);
-
-        pt[0] = rect.x;
-        pt[1] = rect.y + rect.height - 1;
-        mapPoint(pt, sMinX, sMinY, sMaxX, sMaxY, type, mapForwards);
-        dMinX = Math.min(dMinX, pt[0]);
-        dMinY = Math.min(dMinY, pt[1]);
-        dMaxX = Math.max(dMaxX, pt[0]);
-        dMaxY = Math.max(dMaxY, pt[1]);
-
-        pt[0] = rect.x + rect.width - 1;
-        pt[1] = rect.y + rect.height - 1;
-        mapPoint(pt, sMinX, sMinY, sMaxX, sMaxY, type, mapForwards);
-        dMinX = Math.min(dMinX, pt[0]);
-        dMinY = Math.min(dMinY, pt[1]);
-        dMaxX = Math.max(dMaxX, pt[0]);
-        dMaxY = Math.max(dMaxY, pt[1]);
-
-        return new Rectangle(dMinX, dMinY,
-                             dMaxX - dMinX + 1,
-                             dMaxY - dMinY + 1);
+        super(source, config, layout, type);
     }
 
     public Raster computeTile(int tileX, int tileY) {
@@ -392,22 +68,26 @@ final class MlibTransposeOpImage extends GeometricOpImage {
         //
         // Clip output rectangle to image bounds.
         //
-        Rectangle rect = new Rectangle(org.x, org.y,
-                                       sampleModel.getWidth(),
-                                       sampleModel.getHeight());
-
-        Rectangle destRect = rect.intersection(getBounds());
-        Rectangle srcRect =  mapDestRect(destRect, 0);
+        Rectangle destRect =
+            getTileRect(tileX, tileY).intersection(getBounds());
 
         //
         // Get source
         //
         PlanarImage src = getSourceImage(0);
 
-        Raster[] sources = new Raster[1];
+        //
+        // Determine effective source bounds.
+        //
+        Rectangle srcRect =
+            mapDestRect(destRect, 0).intersection(src.getBounds());
 
+        Raster[] sources = new Raster[1];
         sources[0] = src.getData(srcRect);
 
+        //
+        // Compute the destination.
+        //
         computeRect(sources, dest, destRect);
 
         // Recycle the source tile
@@ -423,15 +103,7 @@ final class MlibTransposeOpImage extends GeometricOpImage {
                                Rectangle destRect) {
         Raster source = sources[0];
 
-        //
-        // Get the minX, minY, width & height of sources raster
-        //
-        int x1 = source.getMinX();
-        int y1 = source.getMinY();
-        int src_width = source.getWidth();
-        int src_height = source.getHeight();
-
-        Rectangle srcRect = new Rectangle(x1, y1, src_width, src_height);
+        Rectangle srcRect = source.getBounds();
 
         int formatTag = MediaLibAccessor.findCompatibleTag(sources, dest);
 
