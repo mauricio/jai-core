@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:40 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-14 19:24:54 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -95,8 +95,9 @@ public final class WBMPCodec extends ImageCodec {
         // WBMP has no magic bytes at the beginning so simply check
         // the first three bytes for known constraints.
         return ((header[0] == (byte)0) &&  // TypeField == 0
-                (header[1] & 0x9f) == 0 && // FixHeaderField == 0xx00000
-                (header[2] & 0x7f) != 0);  // First width byte
+                header[1] == 0 && // FixHeaderField == 0xxx00000; not support ext header
+                ((header[2] & 0x8f) != 0 || (header[2] & 0x7f) != 0));  // First width byte
+                //XXX: header[2] & 0x8f) != 0 for the bug in Sony Ericsson encoder.
     }
 }
 
