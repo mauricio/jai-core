@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:04 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-15 18:35:46 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -131,6 +131,7 @@ final class MlibScaleBicubicOpImage extends MlibScaleOpImage {
 				    tx, ty, 
 				    mlibInterpType,
 				    Constants.MLIB_EDGE_DST_NO_WRITE);
+                MlibUtils.clampImage(dstML[i], getColorModel());
             }
             break;
 

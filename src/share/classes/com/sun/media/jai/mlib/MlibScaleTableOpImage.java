@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:05 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-15 18:35:47 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -133,6 +133,7 @@ final class MlibScaleTableOpImage extends MlibScaleOpImage {
 							 (double)tx, (double)ty, 
 							 mlibInterpTable,
 							 Constants.MLIB_EDGE_DST_NO_WRITE);
+                MlibUtils.clampImage(dstML[i], getColorModel());
             }
             break;
 

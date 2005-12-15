@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:09 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-15 18:35:48 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -385,6 +385,7 @@ final class MlibWarpGridTableOpImage extends WarpOpImage {
                                         yStep, yNumCells,
                                         mlibInterpTableI,
                                         Constants.MLIB_EDGE_DST_NO_WRITE);
+                    MlibUtils.clampImage(dstMLI[i], getColorModel());
 	        }
 
             break;

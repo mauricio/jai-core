@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.3 $
- * $Date: 2005-11-14 22:45:29 $
+ * $Revision: 1.4 $
+ * $Date: 2005-12-15 18:35:45 $
  * $State: Exp $
  */
 package com.sun.media.jai.mlib;
@@ -141,6 +141,7 @@ public class MlibAffineBicubicOpImage extends MlibAffineOpImage {
                              medialib_tr,
                              mlibInterpType,
                              Constants.MLIB_EDGE_DST_NO_WRITE);
+            MlibUtils.clampImage(dstML[0], getColorModel());
             break;
 
         case DataBuffer.TYPE_FLOAT:
