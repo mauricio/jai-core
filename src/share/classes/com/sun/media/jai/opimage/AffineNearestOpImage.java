@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:13 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-20 22:05:47 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -179,7 +179,7 @@ class AffineNearestOpImage extends AffineOpImage {
                                                int s_ix, int s_iy,
                                                int ifracx, int ifracy) {
         // Skip output up to clipMinX
-        int skip = clipMinX - dst_min_x;
+        long skip = clipMinX - dst_min_x;
         long dx =
             ((long)ifracx + skip*ifracdx)/geom_frac_max;
         long dy =
@@ -187,18 +187,18 @@ class AffineNearestOpImage extends AffineOpImage {
         s_ix += skip*incx + (int)dx;
         s_iy += skip*incy + (int)dy;
 
-        ifracx += skip*ifracdx;
-        if (ifracx >= 0) {
-            ifracx %= geom_frac_max;
+	long lfracx = ifracx + skip*ifracdx;
+	if (lfracx >= 0) {
+	    ifracx = (int)(lfracx % geom_frac_max);
         } else {
-            ifracx = -(-ifracx % geom_frac_max);
+	    ifracx = (int)(-(-lfracx % geom_frac_max));
         }
 
-        ifracy += skip*ifracdy;
-        if (ifracy >= 0) {
-            ifracy %= geom_frac_max;
+        long lfracy = ifracy + skip*ifracdy;
+        if (lfracy >= 0) {
+            ifracy = (int)(lfracy % geom_frac_max);
         } else {
-            ifracy = -(-ifracy % geom_frac_max);
+            ifracy = (int)(-(-lfracy % geom_frac_max));
         }
 
         return new Point[] {new Point(s_ix, s_iy), new Point(ifracx, ifracy)};
@@ -389,12 +389,16 @@ class AffineNearestOpImage extends AffineOpImage {
             int ifracy = (int) Math.floor(fracy * geom_frac_max);
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					// Last point in the source is
+					// x2 = x1 + width - 1
+					// y2 = y1 + height - 1
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -431,21 +435,33 @@ class AffineNearestOpImage extends AffineOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     src_pos += incxStride;
                     ifracx += ifracdx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     src_pos += incx1Stride;
                     ifracx -= ifracdx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     src_pos += incyStride;
                     ifracy += ifracdy;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     src_pos += incy1Stride;
                     ifracy -= ifracdy1;
                 }
@@ -549,12 +565,16 @@ class AffineNearestOpImage extends AffineOpImage {
             int ifracy = (int) Math.floor(fracy * geom_frac_max);
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					// Last point in the source is
+					// x2 = x1 + width - 1
+					// y2 = y1 + height - 1
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -586,21 +606,33 @@ class AffineNearestOpImage extends AffineOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     src_pos += incxStride;
                     ifracx += ifracdx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     src_pos += incx1Stride;
                     ifracx -= ifracdx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     src_pos += incyStride;
                     ifracy += ifracdy;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     src_pos += incy1Stride;
                     ifracy -= ifracdy1;
                 }
@@ -713,12 +745,16 @@ class AffineNearestOpImage extends AffineOpImage {
             int ifracy = (int) Math.floor(fracy * geom_frac_max);
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					// Last point in the source is
+					// x2 = x1 + width - 1
+					// y2 = y1 + height - 1
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -759,21 +795,33 @@ class AffineNearestOpImage extends AffineOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     src_pos += incxStride;
                     ifracx += ifracdx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     src_pos += incx1Stride;
                     ifracx -= ifracdx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     src_pos += incyStride;
                     ifracy += ifracdy;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     src_pos += incy1Stride;
                     ifracy -= ifracdy1;
                 }
@@ -875,12 +923,16 @@ class AffineNearestOpImage extends AffineOpImage {
             int ifracy = (int) Math.floor(fracy * geom_frac_max);
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					// Last point in the source is
+					// x2 = x1 + width - 1
+					// y2 = y1 + height - 1
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -917,21 +969,33 @@ class AffineNearestOpImage extends AffineOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     src_pos += incxStride;
                     ifracx += ifracdx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     src_pos += incx1Stride;
                     ifracx -= ifracdx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     src_pos += incyStride;
                     ifracy += ifracdy;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     src_pos += incy1Stride;
                     ifracy -= ifracdy1;
                 }
@@ -1029,12 +1093,16 @@ class AffineNearestOpImage extends AffineOpImage {
             int ifracy = (int) Math.floor(fracy * geom_frac_max);
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					// Last point in the source is
+					// x2 = x1 + width - 1
+					// y2 = y1 + height - 1
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -1071,21 +1139,33 @@ class AffineNearestOpImage extends AffineOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     src_pos += incxStride;
                     ifracx += ifracdx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     src_pos += incx1Stride;
                     ifracx -= ifracdx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     src_pos += incyStride;
                     ifracy += ifracdy;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     src_pos += incy1Stride;
                     ifracy -= ifracdy1;
                 }
@@ -1183,12 +1263,16 @@ class AffineNearestOpImage extends AffineOpImage {
             int ifracy = (int) Math.floor(fracy * geom_frac_max);
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					// Last point in the source is
+					// x2 = x1 + width - 1
+					// y2 = y1 + height - 1
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -1225,21 +1309,33 @@ class AffineNearestOpImage extends AffineOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     src_pos += incxStride;
                     ifracx += ifracdx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     src_pos += incx1Stride;
                     ifracx -= ifracdx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     src_pos += incyStride;
                     ifracy += ifracdy;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     src_pos += incy1Stride;
                     ifracy -= ifracdy1;
                 }
@@ -1333,12 +1429,13 @@ class AffineNearestOpImage extends AffineOpImage {
             int ifracy = (int) Math.floor(fracy * geom_frac_max);
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -1375,21 +1472,33 @@ class AffineNearestOpImage extends AffineOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     src_pos += incxStride;
                     ifracx += ifracdx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     src_pos += incx1Stride;
                     ifracx -= ifracdx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     src_pos += incyStride;
                     ifracy += ifracdy;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     src_pos += incy1Stride;
                     ifracy -= ifracdy1;
                 }
