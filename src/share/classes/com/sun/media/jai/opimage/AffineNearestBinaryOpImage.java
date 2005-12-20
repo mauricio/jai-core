@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:13 $
+ * $Revision: 1.2 $
+ * $Date: 2005-12-20 22:01:32 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -220,12 +220,16 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
             int start_ifracy = ifracy;
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					// Last point in the source is
+					// x2 = x1 + width - 1
+					// y2 = y1 + height - 1
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -252,21 +256,33 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     ifracx += ifracdx;
                     sourceXOffset += incx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     ifracx -= ifracdx1;
                     sourceXOffset += incx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     ifracy += ifracdy;
                     sourceYOffset += incyStride;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     ifracy -= ifracdy1;
                     sourceYOffset += incy1Stride;
                 }
@@ -287,21 +303,33 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     ifracx += ifracdx;
                     sourceXOffset += incx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     ifracx -= ifracdx1;
                     sourceXOffset += incx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     ifracy += ifracdy;
                     sourceYOffset += incyStride;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     ifracy -= ifracdy1;
                     sourceYOffset += incy1Stride;
                 }
@@ -321,21 +349,33 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     ifracx += ifracdx;
                     sourceXOffset += incx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     ifracx -= ifracdx1;
                     sourceXOffset += incx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     ifracy += ifracdy;
                     sourceYOffset += incyStride;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     ifracy -= ifracdy1;
                     sourceYOffset += incy1Stride;
                 }
@@ -419,12 +459,16 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
             int start_ifracy = ifracy;
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					// Last point in the source is
+					// x2 = x1 + width - 1
+					// y2 = y1 + height - 1
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -451,21 +495,33 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     ifracx += ifracdx;
                     sourceXOffset += incx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     ifracx -= ifracdx1;
                     sourceXOffset += incx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     ifracy += ifracdy;
                     sourceYOffset += incyStride;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     ifracy -= ifracdy1;
                     sourceYOffset += incy1Stride;
                 }
@@ -486,21 +542,33 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     ifracx += ifracdx;
                     sourceXOffset += incx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     ifracx -= ifracdx1;
                     sourceXOffset += incx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     ifracy += ifracdy;
                     sourceYOffset += incyStride;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     ifracy -= ifracdy1;
                     sourceYOffset += incy1Stride;
                 }
@@ -519,21 +587,33 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     ifracx += ifracdx;
                     sourceXOffset += incx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     ifracx -= ifracdx1;
                     sourceXOffset += incx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     ifracy += ifracdy;
                     sourceYOffset += incyStride;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     ifracy -= ifracdy1;
                     sourceYOffset += incy1Stride;
                 }
@@ -617,12 +697,16 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
             int start_ifracy = ifracy;
 
             // Compute clipMinX, clipMinY
-            Range clipRange = performScanlineClipping(src_rect_x1, src_rect_y1,
-                                                      src_rect_x2, src_rect_y2,
-                                                      s_ix, s_iy,
-                                                      ifracx, ifracy,
-                                                      dst_min_x, dst_max_x,
-                                                      0, 0, 0, 0);
+            Range clipRange = 
+		performScanlineClipping(src_rect_x1, src_rect_y1,
+					// Last point in the source is
+					// x2 = x1 + width - 1
+					// y2 = y1 + height - 1
+					src_rect_x2 - 1, src_rect_y2 - 1,
+					s_ix, s_iy,
+					ifracx, ifracy,
+					dst_min_x, dst_max_x,
+					0, 0, 0, 0);
             int clipMinX = ((Integer)clipRange.getMinValue()).intValue();
             int clipMaxX = ((Integer)clipRange.getMaxValue()).intValue();
 
@@ -648,21 +732,33 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     ifracx += ifracdx;
                     sourceXOffset += incx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     ifracx -= ifracdx1;
                     sourceXOffset += incx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     ifracy += ifracdy;
                     sourceYOffset += incyStride;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     ifracy -= ifracdy1;
                     sourceYOffset += incy1Stride;
                 }
@@ -683,21 +779,33 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     ifracx += ifracdx;
                     sourceXOffset += incx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     ifracx -= ifracdx1;
                     sourceXOffset += incx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     ifracy += ifracdy;
                     sourceYOffset += incyStride;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     ifracy -= ifracdy1;
                     sourceYOffset += incy1Stride;
                 }
@@ -716,21 +824,33 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
                 // walk
                 if (ifracx < ifracdx1) {
+		    /* 
+		    // DEBUG
                     s_ix += incx;
+		    */
                     ifracx += ifracdx;
                     sourceXOffset += incx;
                 } else {
+		    /* 
+		    // DEBUG
                     s_ix += incx1;
+		    */
                     ifracx -= ifracdx1;
                     sourceXOffset += incx1;
                 }
 
                 if (ifracy < ifracdy1) {
+		    /* 
+		    // DEBUG
                     s_iy += incy;
+		    */
                     ifracy += ifracdy;
                     sourceYOffset += incyStride;
                 } else {
+		    /* 
+		    // DEBUG
                     s_iy += incy1;
+		    */
                     ifracy -= ifracdy1;
                     sourceYOffset += incy1Stride;
                 }
