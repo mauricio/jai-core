@@ -5,8 +5,8 @@ Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
  
 Use is subject to license terms.
  
-$Revision: 1.3 $
-$Date: 2005-04-26 01:09:26 $
+$Revision: 1.4 $
+$Date: 2005-12-22 00:16:41 $
 $State: Exp $
 -->
 <project name="jai" default="jar" basedir=".">
@@ -486,7 +486,9 @@ $State: Exp $
 
     <!-- Copy the mediaLib native libraries -->
     <copy todir="${libdir}">
-        <fileset dir="${mlib}/${mlibarch}" includes="**"/>
+        <fileset dir="${mlib}/${mlibarch}"
+                 includes="**"
+                 excludes="cpu,cpu/**"/> <!-- Exclude old "cpu" subdir -->
     </copy>
   </target>
 
