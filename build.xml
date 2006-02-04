@@ -5,8 +5,8 @@ Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
  
 Use is subject to license terms.
  
-$Revision: 1.5 $
-$Date: 2006-02-03 23:05:24 $
+$Revision: 1.6 $
+$Date: 2006-02-04 00:00:40 $
 $State: Exp $
 -->
 <project name="jai" default="jar" basedir=".">
@@ -893,8 +893,8 @@ $State: Exp $
     </zip>
   </target>
 
-  <target name="all" depends="jar-debug,dist"
-	  description="Executes targets jar-debug and dist."/>
+  <target name="all" depends="jar-opt,dist"
+	  description="Executes targets jar-opt and dist."/>
 
   <target name="clean" depends="init"
 	  description="Deletes entities created by all targets on current platform.">
