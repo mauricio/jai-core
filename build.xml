@@ -5,8 +5,8 @@ Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
  
 Use is subject to license terms.
  
-$Revision: 1.7 $
-$Date: 2006-02-04 02:01:01 $
+$Revision: 1.8 $
+$Date: 2006-02-04 02:13:08 $
 $State: Exp $
 -->
 <project name="jai" default="jar" basedir=".">
@@ -628,6 +628,7 @@ $State: Exp $
            classpath="${mlib}/mlibwrapper_jai.jar"
            debug="${debugsetting}"
            deprecation="on"
+           source="1.3"
            target="1.3">
       <exclude name="**/com/sun/media/jai/test/*.java"/>
     </javac>
