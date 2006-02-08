@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-12-07 00:26:16 $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-08 21:14:55 $
  * $State: Exp $
  */
 package com.sun.media.jai.util;
@@ -26,12 +26,16 @@ public final class SimpleCMYKColorSpace extends ColorSpace {
     }
 
     public float[] toRGB(float[] colorvalue) {
+        float C = colorvalue[0];
+        float M = colorvalue[1];
+        float Y = colorvalue[2];
         float K = colorvalue[3];
-        float C = colorvalue[0] - K;
-        float M = colorvalue[1] - K;
-        float Y = colorvalue[2] - K;
 
-        return new float[] {1.0F - C, 1.0F - M, 1.0F - Y};
+        float K1 = 1.0F - K;
+
+        return new float[] {K1*(1.0F - C),
+                            K1*(1.0F - M),
+                            K1*(1.0F - Y)};
     }
 
     public float[] fromRGB(float[] rgbvalue) {
@@ -39,6 +43,15 @@ public final class SimpleCMYKColorSpace extends ColorSpace {
         float M = 1.0F - rgbvalue[1];
         float Y = 1.0F - rgbvalue[2];
         float K = Math.min(C, Math.min(M, Y));
+
+        // If K == 1.0F, then C = M = Y = 1.0F.
+        if(K != 1.0F) {
+            float K1 = 1.0F - K;
+
+            C = (C - K)/K1;
+            M = (M - K)/K1;
+            Y = (Y - K)/K1;
+        }
 
         return new float[] {C, M, Y, K};
     }
