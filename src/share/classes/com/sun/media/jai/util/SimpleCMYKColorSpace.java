@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2006-02-08 21:14:55 $
+ * $Revision: 1.3 $
+ * $Date: 2006-02-10 16:18:30 $
  * $State: Exp $
  */
 package com.sun.media.jai.util;
@@ -51,6 +51,8 @@ public final class SimpleCMYKColorSpace extends ColorSpace {
             C = (C - K)/K1;
             M = (M - K)/K1;
             Y = (Y - K)/K1;
+        } else {
+            C = M = Y = 0.0F;
         }
 
         return new float[] {C, M, Y, K};
