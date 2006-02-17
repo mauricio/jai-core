@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.5 $
- * $Date: 2005-12-07 00:23:12 $
+ * $Revision: 1.6 $
+ * $Date: 2006-02-17 17:59:15 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -796,9 +796,8 @@ public class TIFFImage extends SimpleRenderedImage {
                 colorModel =
                     ImageCodec.createComponentColorModel(sampleModel);
             } else if (imageType == TYPE_CMYK) {
-		
 		colorModel = ImageCodec.createComponentColorModel(sampleModel,
-								  new SimpleCMYKColorSpace());
+								  SimpleCMYKColorSpace.getInstance());
 	    } else { // hasAlpha
                 // Transparency.OPAQUE signifies image data that is
                 // completely opaque, meaning that all pixels have an alpha
