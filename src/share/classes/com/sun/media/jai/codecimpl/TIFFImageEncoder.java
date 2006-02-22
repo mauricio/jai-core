@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-11-14 22:44:48 $
+ * $Revision: 1.3 $
+ * $Date: 2006-02-22 23:03:30 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -714,7 +714,7 @@ public class TIFFImageEncoder extends ImageEncoderImpl {
             }
 
             // Get the JDK encoding parameters.
-            Raster tile00 = im.getTile(0, 0);
+            Raster tile00 = im.getTile(im.getMinTileX(), im.getMinTileY());
             jpegEncodeParam =
                 com.sun.image.codec.jpeg.JPEGCodec.getDefaultJPEGEncodeParam(
                     tile00, jpegColorID);
