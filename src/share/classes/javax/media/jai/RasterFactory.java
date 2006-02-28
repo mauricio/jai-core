@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:18 $
+ * $Revision: 1.2 $
+ * $Date: 2006-02-28 00:16:11 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -28,18 +28,6 @@ import java.awt.image.RasterFormatException;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import com.sun.media.jai.util.DataBufferUtils;
-
-class WritableRasterJAI extends WritableRaster {
-
-    protected WritableRasterJAI(SampleModel sampleModel,
-                                DataBuffer dataBuffer,
-                                Rectangle aRegion,
-                                Point sampleModelTranslate,
-                                WritableRaster parent){
-        super(sampleModel, dataBuffer, aRegion,
-              sampleModelTranslate, parent);
-    }
-}
 
 /**
  * A convenience class for the construction of various types of
@@ -787,49 +775,12 @@ public class RasterFactory {
                                                      int childMinX,
                                                      int childMinY,
                                                      int bandList[]) {
-        if (parentX < raster.getMinX()) {
-            throw new RasterFormatException(JaiI18N.getString("RasterFactory9"));
-        }
-        if (parentY < raster.getMinY()) {
-            throw new 
-		RasterFormatException(JaiI18N.getString("RasterFactory10"));
-        }
-        if (parentX + width > raster.getWidth() + raster.getMinX()) {
-            throw new 
-		RasterFormatException(JaiI18N.getString("RasterFactory11"));
-        }
-        if (parentY + height > raster.getHeight() + raster.getMinY()) {
-            throw new 
-		RasterFormatException(JaiI18N.getString("RasterFactory12"));
-        }
-
-        SampleModel sampleModel = raster.getSampleModel();
-        DataBuffer dataBuffer = raster.getDataBuffer();
-        int sampleModelTranslateX = raster.getSampleModelTranslateX();
-        int sampleModelTranslateY = raster.getSampleModelTranslateY();
-
-        SampleModel sm;
-
-        if (bandList != null) {
-            sm = sampleModel.createCompatibleSampleModel(
-                                                      sampleModel.getWidth(),
-                                                      sampleModel.getHeight());
-            sm = sm.createSubsetSampleModel(bandList);
-        }
-        else {
-            sm = sampleModel;
-        }
-
-        int deltaX = childMinX - parentX;
-        int deltaY = childMinY - parentY;
-
-        return new WritableRasterJAI(sm,
-                                     dataBuffer,
-                                     new Rectangle(childMinX, childMinY,
-                                                   width, height),
-                                     new Point(sampleModelTranslateX + deltaX,
-                                               sampleModelTranslateY + deltaY),
-                                     raster);
+        // Simply forward the call to the equivalent WritableRaster method.
+        // The WritableRaster bug referred to in the javadoc was 4212434
+        // and was fixed in Java SE 1.3, which is the minimum version
+        // required for JAI.
+        return raster.createWritableChild(parentX, parentY, width, height,
+                                          childMinX, childMinY, bandList);
     }
 
 
