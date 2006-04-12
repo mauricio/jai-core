@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:35 $
+ * $Revision: 1.2 $
+ * $Date: 2006-04-12 18:08:11 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -117,6 +117,8 @@ class BMPImage extends SimpleRenderedImage {
 	    inputStream = new BufferedInputStream(stream);
 	}
 	try {
+
+	    inputStream.mark(Integer.MAX_VALUE);
 
 	    // Start File Header
 	    if (!(readUnsignedByte(inputStream) == 'B' &&
@@ -514,6 +516,16 @@ class BMPImage extends SimpleRenderedImage {
 	    colorModel =
 		ImageCodec.createComponentColorModel(sampleModel);
     	}
+
+	try {
+	    inputStream.reset();
+	    inputStream.skip(bitmapOffset);
+	} catch (IOException ioe) {
+            String message = JaiI18N.getString("BMPImageDecoder9");
+            ImagingListenerProxy.errorOccurred(message,
+                                   new ImagingException(message, ioe),
+                                   this, false);
+	}
     }
 
     // Deal with 1 Bit images using IndexColorModels
