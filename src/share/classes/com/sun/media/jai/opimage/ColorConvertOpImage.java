@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.3 $
- * $Date: 2006-06-16 20:10:25 $
+ * $Revision: 1.4 $
+ * $Date: 2006-06-16 20:25:49 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -367,7 +367,11 @@ final class ColorConvertOpImage extends PointOpImage {
             }
 
             // Perform the color conversion on the (possible child) Rasters.
-            colorConvertOp.filter(s, d);
+            synchronized (colorConvertOp.getClass()) {
+                // Lock on the class to prevent crash in non-re-entrant
+                // native code on MP systems (jai-core issue 21).
+                colorConvertOp.filter(s, d);
+            }
         } else {
             //For the floating point data types, convert via CIEXYZ color space.
             //Do it pixel-by-pixel (slow!).
