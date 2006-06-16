@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:06 $
+ * $Revision: 1.2 $
+ * $Date: 2006-06-16 22:52:05 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -879,7 +880,7 @@ public class CollectionOp extends CollectionImage
 
         // Get the name of the bean property and convert it to lower
         // case now for efficiency later.
-        String propName = evt.getPropertyName().toLowerCase();
+        String propName = evt.getPropertyName().toLowerCase(Locale.ENGLISH);
 
         if(imageCollection != null &&
            ((evt instanceof PropertyChangeEventJAI &&

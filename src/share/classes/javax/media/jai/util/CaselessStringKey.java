@@ -5,13 +5,14 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:57 $
+ * $Revision: 1.2 $
+ * $Date: 2006-06-16 22:52:04 $
  * $State: Exp $
  */
 package javax.media.jai.util;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * Class to use as the key in a <code>java.util.Map</code>.
@@ -71,7 +72,7 @@ public final class CaselessStringKey implements Cloneable, Serializable {
             throw new IllegalArgumentException(JaiI18N.getString("CaselessStringKey0"));
         }
         this.name = name;
-        lowerCaseName = name.toLowerCase();
+        lowerCaseName = name.toLowerCase(Locale.ENGLISH);
     }
 
     /**

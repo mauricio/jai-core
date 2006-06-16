@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:53 $
+ * $Revision: 1.2 $
+ * $Date: 2006-06-16 22:52:05 $
  * $State: Exp $
  */package javax.media.jai.remote;
 
@@ -521,7 +521,7 @@ public class RemoteRenderedOp extends RenderedOp
 
         // Get the name of the bean property and convert it to lower
         // case now for efficiency later.
-        String propName = evt.getPropertyName().toLowerCase();
+        String propName = evt.getPropertyName().toLowerCase(Locale.ENGLISH);
 
         if (theImage != null &&
            ((evt instanceof PropertyChangeEventJAI &&
