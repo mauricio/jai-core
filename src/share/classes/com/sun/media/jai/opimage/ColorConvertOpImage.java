@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-08-15 18:20:27 $
+ * $Revision: 1.3 $
+ * $Date: 2006-06-16 20:10:25 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
