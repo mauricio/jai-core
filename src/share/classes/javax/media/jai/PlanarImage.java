@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-07-29 20:27:49 $
+ * $Revision: 1.3 $
+ * $Date: 2006-06-16 19:55:56 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -206,7 +206,9 @@ public abstract class PlanarImage implements ImageJAI, RenderedImage {
     protected int height;
 
     /** The image's bounds. */
-    private Rectangle bounds = null;
+    // Initialize to an empty Rectangle so this object may always
+    // be used as a mutual exclusion lock in getBounds().
+    private Rectangle bounds = new Rectangle();
 
     /**
      * The X coordinate of the top-left pixel of tile (0, 0).
@@ -696,17 +698,10 @@ public abstract class PlanarImage implements ImageJAI, RenderedImage {
      * This may generally occur only for instances of <code>RenderedOp</code>.
      */
     public Rectangle getBounds() {
-        if (bounds == null) {
-            synchronized (this) {
-                bounds = new Rectangle(getMinX(), getMinY(),
-                                       getWidth(), getHeight());
-            }
-        } else {
-            synchronized(bounds) {
-                bounds.setBounds(getMinX(), getMinY(),
-                                 getWidth(), getHeight());
-            }
+        synchronized(bounds) {
+            bounds.setBounds(getMinX(), getMinY(), getWidth(), getHeight());
         }
+
 	return bounds;
     }
 
