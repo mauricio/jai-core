@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:43 $
+ * $Revision: 1.2 $
+ * $Date: 2006-06-17 00:02:28 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -34,6 +34,7 @@ import javax.media.jai.TileCache;
 import javax.media.jai.registry.RIFRegistry;
 import javax.media.jai.util.ImagingException;
 import javax.media.jai.util.ImagingListener;
+import com.sun.media.jai.util.DisposableNullOpImage;
 import com.sun.media.jai.util.ImageUtil;
 
 /**
@@ -174,7 +175,8 @@ public class StreamRIF implements RenderedImageFactory {
 
             // If decoding succeeded, wrap the result in an OpImage.
             if (im != null) {
-                return new NullOpImage(im, layout, renderHints, bound);
+                return new DisposableNullOpImage(im, layout,
+                                                 renderHints, bound);
             }
         }
 

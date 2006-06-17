@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:37 $
+ * $Revision: 1.2 $
+ * $Date: 2006-06-17 00:02:29 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -1765,5 +1765,9 @@ class PNGImage extends SimpleRenderedImage {
             throw new IllegalArgumentException(JaiI18N.getString("PNGImageDecoder17"));
         }
         return theTile;
+    }
+
+    public void dispose() {
+        theTile = null;
     }
 }

@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-11-15 00:38:15 $
+ * $Revision: 1.3 $
+ * $Date: 2006-06-17 00:02:28 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -17,6 +17,8 @@ import java.awt.image.renderable.RenderedImageFactory;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
 import javax.media.jai.JAI;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.OpImage;
@@ -30,7 +32,8 @@ import com.sun.media.jai.util.ImageUtil;
 
 /*
  * Package-scope class which merely adds a finalize() method to close
- * the associated stream.
+ * the associated stream and a dispose() method to forward the dispose()
+ * call if possible.
  */
 class StreamImage extends RenderedImageAdapter {
     private InputStream stream;
@@ -50,6 +53,24 @@ class StreamImage extends RenderedImageAdapter {
             setProperty("tile_cache",
                         tileCache == null ?
                         java.awt.Image.UndefinedProperty : tileCache);
+        }
+    }
+
+    public void dispose() {
+        // Use relection to invoke dispose();
+        RenderedImage trueSrc = getWrappedImage();
+        Method disposeMethod = null;
+        try {
+            Class cls = trueSrc.getClass();
+            disposeMethod = cls.getMethod("dispose", null);
+            if(!disposeMethod.isAccessible()) {
+                AccessibleObject.setAccessible(new AccessibleObject[] {
+                    disposeMethod
+                }, true);
+            }
+            disposeMethod.invoke(trueSrc, null);
+        } catch(Exception e) {
+            // Ignore it.
         }
     }
 

@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:17 $
+ * $Revision: 1.2 $
+ * $Date: 2006-06-17 00:02:28 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -17,7 +17,6 @@ import java.awt.image.renderable.RenderedImageFactory;
 import java.io.IOException;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
-import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.TileCache;
 import javax.media.jai.util.ImagingException;
@@ -26,6 +25,7 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 import com.sun.media.jai.codec.ImageDecodeParam;
 import com.sun.media.jai.codec.SeekableStream;
+import com.sun.media.jai.util.DisposableNullOpImage;
 import com.sun.media.jai.util.ImageUtil;
 
 public class CodecRIFUtil {
@@ -85,10 +85,10 @@ public class CodecRIFUtil {
             OpImage image = null;
             try {
                 // Attempt to create an OpImage from the decoder image.
-                image = new NullOpImage(dec.decodeAsRenderedImage(page),
-                                        layout,
-                                        renderHints,
-                                        bound);
+                image = new DisposableNullOpImage(dec.decodeAsRenderedImage(page),
+                                                  layout,
+                                                  renderHints,
+                                                  bound);
             } catch(OutOfMemoryError memoryError) {
                 // Ran out of memory - may be due to the decoder being
                 // obliged to read the entire image when it creates the
@@ -109,10 +109,10 @@ public class CodecRIFUtil {
                     source.seek(streamPosition);
 
                     // Retry image decoding.
-                    image = new NullOpImage(dec.decodeAsRenderedImage(page),
-                                            layout,
-                                            renderHints,
-                                            bound);
+                    image = new DisposableNullOpImage(dec.decodeAsRenderedImage(page),
+                                                      layout,
+                                                      renderHints,
+                                                      bound);
                 } else {
                     // Re-throw the error.
                     String message = JaiI18N.getString("CodecRIFUtil0");

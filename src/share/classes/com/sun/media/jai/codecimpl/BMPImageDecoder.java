@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2006-04-12 18:08:11 $
+ * $Revision: 1.3 $
+ * $Date: 2006-06-17 00:02:28 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -1294,5 +1294,9 @@ class BMPImage extends SimpleRenderedImage {
 		IllegalArgumentException(JaiI18N.getString("BMPImageDecoder7"));
         }
         return computeTile(tileX, tileY);
+    }
+
+    public void dispose() {
+        theTile = null;
     }
 }

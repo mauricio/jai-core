@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:38 $
+ * $Revision: 1.2 $
+ * $Date: 2006-06-17 00:02:29 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -318,6 +318,10 @@ class PNMImage extends SimpleRenderedImage {
         }
 
         return theTile;
+    }
+
+    public void dispose() {
+        theTile = null;
     }
 
     private void sendExceptionToListener(String message, Exception e) {
