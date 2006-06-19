@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:56:15 $
+ * $Revision: 1.2 $
+ * $Date: 2006-06-19 18:33:35 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -144,10 +144,24 @@ class BandMergeOpImage extends PointOpImage {
                 destOffsets[i] = i;
             }
 
+            // determine the proper width and height to use
+            int destTileWidth = sm.getWidth();
+            int destTileHeight = sm.getHeight();
+            if(layout.isValid(ImageLayout.TILE_WIDTH_MASK))
+            {
+                destTileWidth =
+                    layout.getTileWidth((RenderedImage)sources.get(0));
+            }
+            if(layout.isValid(ImageLayout.TILE_HEIGHT_MASK))
+            {
+                destTileHeight =
+                    layout.getTileHeight((RenderedImage)sources.get(0));
+            }
+            
             sm = RasterFactory.createComponentSampleModel(sm,
                                                           destDataType,
-                                                          destBounds.width,
-                                                          destBounds.height,
+                                                          destTileWidth,
+                                                          destTileHeight,
                                                           destNumBands);
 
 
