@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2005-12-20 22:01:32 $
+ * $Revision: 1.3 $
+ * $Date: 2006-07-21 20:41:27 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -16,8 +16,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferShort;
 import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferUShort;
 import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -395,8 +395,8 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
         MultiPixelPackedSampleModel sourceSM =
             (MultiPixelPackedSampleModel)source.getSampleModel();
-        DataBufferShort sourceDB =
-            (DataBufferShort)source.getDataBuffer();
+        DataBufferUShort sourceDB =
+            (DataBufferUShort)source.getDataBuffer();
         int sourceTransX = source.getSampleModelTranslateX();
         int sourceTransY = source.getSampleModelTranslateY();
         int sourceDataBitOffset = sourceSM.getDataBitOffset();
@@ -404,8 +404,8 @@ final class AffineNearestBinaryOpImage extends AffineNearestOpImage {
 
         MultiPixelPackedSampleModel destSM =
             (MultiPixelPackedSampleModel)dest.getSampleModel();
-        DataBufferShort destDB =
-            (DataBufferShort)dest.getDataBuffer();
+        DataBufferUShort destDB =
+            (DataBufferUShort)dest.getDataBuffer();
         int destMinX = dest.getMinX();
         int destMinY = dest.getMinY();
         int destTransX = dest.getSampleModelTranslateX();
