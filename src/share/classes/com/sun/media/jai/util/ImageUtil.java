@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:00 $
+ * $Revision: 1.2 $
+ * $Date: 2006-07-21 20:53:28 $
  * $State: Exp $
  */
 package com.sun.media.jai.util;
@@ -1068,43 +1068,54 @@ public final class ImageUtil {
 
                     byte mask = (byte)(255 >> bits);
                     int lineLength = (rectWidth - otherBits) / 8;
-                    int bits1 = rectWidth - otherBits & 7;
+                    int bits1 = (rectWidth - otherBits) & 7;
                     byte mask1 = (byte)(255 << (8 - bits1));
+                    // If operating within a single byte, merge masks into one
+                    // and don't apply second mask after while loop
+                    if (lineLength == 0) {
+                        mask &= mask1;
+                        bits1 = 0;
+                    }
 
                     for (int y = 0; y < rectHeight; y++) {
                         int start = eltOffset;
-                        if (bits != 0)
-                            data[start++] = mask;
                         int end = start + lineLength;
+                        if (bits != 0)
+                            data[start++] |= mask;
                         while (start < end)
                             data[start++] = (byte)255;
                         if (bits1 != 0)
-                            data[start++] = mask1;
+                            data[start] |= mask1;
                         eltOffset += lineStride;
                     }
                     break;
                 }
-            case DataBuffer.TYPE_SHORT:
             case DataBuffer.TYPE_USHORT:
                 {
-                    short[] data = ((DataBufferShort)dataBuffer).getData();
+                    short[] data = ((DataBufferUShort)dataBuffer).getData();
                     int bits = bitOffset & 15;
                     int otherBits = (bits == 0) ? 0: 16 - bits;
 
                     short mask = (short)(65535 >> bits);
                     int lineLength = (rectWidth - otherBits) / 16;
-                    int bits1 = rectWidth - otherBits & 15;
+                    int bits1 = (rectWidth - otherBits) & 15;
                     short mask1 = (short)(65535 << (16 - bits1));
+                    // If operating within a single byte, merge masks into one
+                    // and don't apply second mask after while loop
+                    if (lineLength == 0) {
+                        mask &= mask1;
+                        bits1 = 0;
+                    }
 
                     for (int y = 0; y < rectHeight; y++) {
                         int start = eltOffset;
-                        if (bits != 0)
-                            data[start++] = mask;
                         int end = start + lineLength;
+                        if (bits != 0)
+                            data[start++] |= mask;
                         while (start < end)
                             data[start++] = (short)0xFFFF;
                         if (bits1 != 0)
-                            data[start++] = mask1;
+                            data[start++] |= mask1;
                         eltOffset += lineStride;
                     }
                     break;
@@ -1115,20 +1126,26 @@ public final class ImageUtil {
                     int bits = bitOffset & 31;
                     int otherBits = (bits == 0) ? 0: 32 - bits;
 
-                    short mask = (short)(0xFFFFFFFF >> bits);
+                    int mask = 0xFFFFFFFF >> bits;
                     int lineLength = (rectWidth - otherBits) / 32;
-                    int bits1 = rectWidth - otherBits & 31;
-                    short mask1 = (short)(0xFFFFFFFF << (32 - bits1));
+                    int bits1 = (rectWidth - otherBits) & 31;
+                    int mask1 = 0xFFFFFFFF << (32 - bits1);
+                    // If operating within a single byte, merge masks into one
+                    // and don't apply second mask after while loop
+                    if (lineLength == 0) {
+                        mask &= mask1;
+                        bits1 = 0;
+                    }
 
                     for (int y = 0; y < rectHeight; y++) {
                         int start = eltOffset;
-                        if (bits != 0)
-                            data[start++] = mask;
                         int end = start + lineLength;
+                        if (bits != 0)
+                            data[start++] |= mask;
                         while (start < end)
                             data[start++] = 0xFFFFFFFF;
                         if (bits1 != 0)
-                            data[start++] = mask1;
+                            data[start++] |= mask1;
                         eltOffset += lineStride;
                     }
                     break;
