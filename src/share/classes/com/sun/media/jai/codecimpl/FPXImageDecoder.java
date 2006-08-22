@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:36 $
+ * $Revision: 1.2 $
+ * $Date: 2006-08-22 00:12:04 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -34,6 +34,10 @@ public class FPXImageDecoder extends ImageDecoderImpl {
         if (page != 0) {
             throw new IOException(JaiI18N.getString("FPXImageDecoder0"));
         }
-        return new FPXImage(input, (FPXDecodeParam)param);
+        try {
+            return new FPXImage(input, (FPXDecodeParam)param);
+        } catch(Exception e) {
+            throw CodecUtils.toIOException(e);
+        }
     }
 }

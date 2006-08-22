@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:55:39 $
+ * $Revision: 1.2 $
+ * $Date: 2006-08-22 00:12:04 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -92,13 +92,21 @@ public class TIFFImageDecoder extends ImageDecoderImpl {
     }
 
     public int getNumPages() throws IOException {
-        return TIFFDirectory.getNumDirectories(input);
+        try {
+            return TIFFDirectory.getNumDirectories(input);
+        } catch(Exception e) {
+            throw CodecUtils.toIOException(e);
+        }
     }
 
     public RenderedImage decodeAsRenderedImage(int page) throws IOException {
         if  ((page < 0) || (page >= getNumPages())) {
             throw new IOException(JaiI18N.getString("TIFFImageDecoder0"));
         }
-        return new TIFFImage(input, (TIFFDecodeParam)param, page);
+        try {
+            return new TIFFImage(input, (TIFFDecodeParam)param, page);
+        } catch(Exception e) {
+            throw CodecUtils.toIOException(e);
+        }
     }
 }

@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.2 $
- * $Date: 2006-06-17 00:02:29 $
+ * $Revision: 1.3 $
+ * $Date: 2006-08-22 00:12:04 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -70,7 +70,11 @@ public class PNGImageDecoder extends ImageDecoderImpl {
         if (page != 0) {
             throw new IOException(JaiI18N.getString("PNGImageDecoder19"));
         }
-        return new PNGImage(input, (PNGDecodeParam)param);
+        try {
+            return new PNGImage(input, (PNGDecodeParam)param);
+        } catch(Exception e) {
+            throw CodecUtils.toIOException(e);
+        }
     }
 }
 

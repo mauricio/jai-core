@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.3 $
- * $Date: 2006-06-17 00:02:28 $
+ * $Revision: 1.4 $
+ * $Date: 2006-08-22 00:12:03 $
  * $State: Exp $
  */
 package com.sun.media.jai.codecimpl;
@@ -52,7 +52,11 @@ public class BMPImageDecoder extends ImageDecoderImpl {
         if (page != 0) {
             throw new IOException(JaiI18N.getString("BMPImageDecoder8"));
         }
-        return new BMPImage(input);
+        try {
+            return new BMPImage(input);
+        } catch(Exception e) {
+            throw CodecUtils.toIOException(e);
+        }
     }
 }
 
