@@ -5,8 +5,8 @@ Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
  
 Use is subject to license terms.
  
-$Revision: 1.8 $
-$Date: 2006-02-04 02:13:08 $
+$Revision: 1.9 $
+$Date: 2006-09-01 00:14:18 $
 $State: Exp $
 -->
 <project name="jai" default="jar" basedir=".">
@@ -825,7 +825,7 @@ $State: Exp $
                            com.sun.media.jai.widget"
 	     maxmemory="128m"
              destdir="${docbuilddir}"
-             windowtitle="Java Advanced Imaging ${verspecfile}">
+             windowtitle="Java Advanced Imaging ${version}">
       <link offline="true"
 	    href="${docurl}"
             packagelistLoc="${packageListLoc}"/>
