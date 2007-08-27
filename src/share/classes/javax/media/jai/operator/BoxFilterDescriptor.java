@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:31 $
+ * $Revision: 1.2 $
+ * $Date: 2007-08-27 21:33:23 $
  * $State: Exp $
  */
 package javax.media.jai.operator;
@@ -146,6 +146,12 @@ public class BoxFilterDescriptor extends OperationDescriptorImpl {
                                          StringBuffer msg) {
         // The number of parameters supplied.
         int argNumParams = args.getNumParameters();
+
+        if(argNumParams == 0) {
+            // set width to default
+            args.add(paramDefaults[0]);
+            argNumParams++;
+        }
 
         if(argNumParams > 0 &&
            args.getObjectParameter(0) instanceof Integer) {
