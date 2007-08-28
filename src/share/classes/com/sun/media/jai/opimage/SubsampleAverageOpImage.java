@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.3 $
- * $Date: 2005-08-26 23:51:40 $
+ * $Revision: 1.4 $
+ * $Date: 2007-08-28 23:25:55 $
  * $State: Exp $
  */
 package com.sun.media.jai.opimage;
@@ -202,8 +202,8 @@ public class SubsampleAverageOpImage extends GeometricOpImage {
         // Determine the integral positions.
         int x1 = (int)Math.floor(p1.getX());
         int y1 = (int)Math.floor(p1.getY());
-        int x2 = (int)Math.floor(p2.getX());
-        int y2 = (int)Math.floor(p2.getY());
+        int x2 = (int)Math.ceil(p2.getX());
+        int y2 = (int)Math.ceil(p2.getY());
 
         // Return rectangle based on integral positions.
         return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
@@ -233,8 +233,8 @@ public class SubsampleAverageOpImage extends GeometricOpImage {
         // Determine the integral positions.
         int x1 = (int)Math.floor(p1.getX());
         int y1 = (int)Math.floor(p1.getY());
-        int x2 = (int)Math.floor(p2.getX());
-        int y2 = (int)Math.floor(p2.getY());
+        int x2 = (int)Math.ceil(p2.getX());
+        int y2 = (int)Math.ceil(p2.getY());
 
         // Return rectangle based on integral positions.
         return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
