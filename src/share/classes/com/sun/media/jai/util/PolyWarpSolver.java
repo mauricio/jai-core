@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:01 $
+ * $Revision: 1.2 $
+ * $Date: 2007-08-29 23:08:09 $
  * $State: Exp $
  */
 package com.sun.media.jai.util;
@@ -465,19 +465,19 @@ public class PolyWarpSolver {
             double x0, x1, x2, y0, y1, y2;
             double u0, u1, u2, v0, v1, v2;
 
-            x0 = sourceCoords[0]*preScaleX;
-            y0 = sourceCoords[1]*preScaleY;
-            x1 = sourceCoords[2]*preScaleX;
-            y1 = sourceCoords[3]*preScaleY;
-            x2 = sourceCoords[4]*preScaleY;
-            y2 = sourceCoords[5]*preScaleY;
+            x0 = sourceCoords[0]/postScaleX;
+            y0 = sourceCoords[1]/postScaleY;
+            x1 = sourceCoords[2]/postScaleX;
+            y1 = sourceCoords[3]/postScaleY;
+            x2 = sourceCoords[4]/postScaleX;
+            y2 = sourceCoords[5]/postScaleY;
 
-            u0 = destCoords[0]/postScaleX;
-            v0 = destCoords[1]/postScaleY;
-            u1 = destCoords[2]/postScaleX;
-            v1 = destCoords[3]/postScaleY;
-            u2 = destCoords[4]/postScaleX;
-            v2 = destCoords[5]/postScaleY;
+            u0 = destCoords[0]*preScaleX;
+            v0 = destCoords[1]*preScaleY;
+            u1 = destCoords[2]*preScaleX;
+            v1 = destCoords[3]*preScaleY;
+            u2 = destCoords[4]*preScaleX;
+            v2 = destCoords[5]*preScaleY;
 
             double v0mv1 = v0 - v1;
             double v1mv2 = v1 - v2;
@@ -521,8 +521,8 @@ public class PolyWarpSolver {
 
         for (i = 0; i < equations; i++) {
             double[] Ai = A[i];
-            double x = destCoords[2*i + destOffset]/postScaleX;
-            double y = destCoords[2*i + 1 + destOffset]/postScaleY;
+            double x = destCoords[2*i + destOffset]*preScaleX;
+            double y = destCoords[2*i + 1 + destOffset]*preScaleY;
             
             double xtmp = 1.0F;
             double ytmp = 1.0F;
@@ -566,8 +566,8 @@ public class PolyWarpSolver {
             double tmp1 = 0;
             for (j = 0; j < equations; j++) {
                 double val = VWINVUT[i][j];
-                tmp0 += val*sourceCoords[2*j + sourceOffset]*preScaleX;
-                tmp1 += val*sourceCoords[2*j + 1 + sourceOffset]*preScaleY;
+                tmp0 += val*sourceCoords[2*j + sourceOffset]/postScaleX;
+                tmp1 += val*sourceCoords[2*j + 1 + sourceOffset]/postScaleY;
             }
             out[i] = (float)tmp0;
             out[i + unknowns] = (float)tmp1;
@@ -581,18 +581,28 @@ public class PolyWarpSolver {
     private static Random myRandom = new Random(0);
     private static double c0[] = new double[6];
     private static double c1[] = new double[6];
+    private static double preScaleX;
+    private static double preScaleY;
+    private static double postScaleX;
+    private static double postScaleY;
     private static double noise = 0.0F;
 
     private static float xpoly(float x, float y) {
-        return (float)(c0[0] + c0[1]*x + c0[2]*y +
-                       c0[3]*x*x + c0[4]*x*y +
-                       c0[5]*y*y + (myRandom.nextDouble()*noise));
+        x *= (float) preScaleX;
+        y *= (float) preScaleY;
+        return (float)(postScaleX *
+                       (c0[0] + c0[1]*x + c0[2]*y +
+                        c0[3]*x*x + c0[4]*x*y +
+                        c0[5]*y*y + myRandom.nextDouble()*noise));
     }
 
     private static float ypoly(float x, float y) {
-        return (float)(c1[0] + c1[1]*x + c1[2]*y +
-                       c1[3]*x*x + c1[4]*x*y +
-                       c1[5]*y*y + (myRandom.nextDouble()*noise));
+        x *= (float) preScaleX;
+        y *= (float) preScaleY;
+        return (float)(postScaleY *
+                       (c1[0] + c1[1]*x + c1[2]*y +
+                        c1[3]*x*x + c1[4]*x*y +
+                        c1[5]*y*y + myRandom.nextDouble()*noise));
     }
 
     private static void doTest(int equations, boolean print) {
@@ -601,6 +611,12 @@ public class PolyWarpSolver {
             c0[i] = myRandom.nextDouble()*100.0F;
             c1[i] = myRandom.nextDouble()*100.0F;
         }
+
+        // Make up random pre- and postScales:
+        preScaleX = myRandom.nextDouble() + 2.0; // Value between 2 and 3
+        preScaleY = myRandom.nextDouble() + 3.0; // Value between 3 and 4
+        postScaleX = myRandom.nextDouble() + 4.0; // Value between 4 and 5
+        postScaleY = myRandom.nextDouble() + 5.0; // Value between 5 and 6
 
         // Make up random destination coordinates
         float[] destCoords = new float[2*equations];
@@ -621,7 +637,8 @@ public class PolyWarpSolver {
         float[] coeffs = getCoeffs(sourceCoords, 0,
                                    destCoords, 0, 
                                    sourceCoords.length,
-                                   0.5F, 0.5F, 2.0F, 2.0F,
+                                   (float)preScaleX, (float)preScaleY,
+                                   (float)postScaleX, (float)postScaleY,
                                    2);
 
         // Print the results
