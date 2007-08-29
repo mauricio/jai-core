@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:25 $
+ * $Revision: 1.2 $
+ * $Date: 2007-08-29 23:23:39 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -103,12 +103,12 @@ public abstract class WarpPolynomial extends Warp {
      *
      * and coefficients of value 0 cannot be omitted.
      *
-     * <p>The source (x, y) coordinate is pre-scaled by the factors
-     * preScaleX and preScaleY prior to the evaluation of the
-     * polynomial.  The result of the polynomial evaluations are
-     * scaled by postScaleX and postScaleY to produce the destination
-     * pixel coordinates.  This process allows for better precision of the
-     * results.
+     * <p>The destination (x, y) coordinates are multiplied by the
+     * factors preScaleX and preScaleY prior to the evaluation of the
+     * polynomial.  The results of the polynomial evaluations are
+     * multiplied by postScaleX and postScaleY to produce the source
+     * pixel coordinates.  This process allows for better precision of
+     * the results.
      *
      * @param xCoeffs  The destination to source transform coefficients for
      *                 the X coordinate.
