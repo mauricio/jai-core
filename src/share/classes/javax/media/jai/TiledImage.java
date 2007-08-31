@@ -5,8 +5,8 @@
  *
  * Use is subject to license terms.
  *
- * $Revision: 1.1 $
- * $Date: 2005-02-11 04:57:22 $
+ * $Revision: 1.2 $
+ * $Date: 2007-08-31 16:25:50 $
  * $State: Exp $
  */
 package javax.media.jai;
@@ -351,7 +351,15 @@ public class TiledImage extends PlanarImage
      */
     public TiledImage(RenderedImage source, boolean areBuffersShared) {
         this(source, source.getTileWidth(), source.getTileHeight());
-        this.areBuffersShared = areBuffersShared;
+
+        // Do not re-use source tiles if the source does not compute unique tiles.
+        RenderedImage sourceRendering = source instanceof RenderedOp ?
+            ((RenderedOp)source).getRendering() : source;
+        boolean suppressBufferSharing =
+            sourceRendering instanceof OpImage &&
+            !((OpImage)sourceRendering).computesUniqueTiles();
+
+        this.areBuffersShared = areBuffersShared && !suppressBufferSharing;
     }
 
     /**
